@@ -1,0 +1,39 @@
+name: school_application
+description:
+
+publish_to:
+
+version: 1.0.0+1
+
+environment:
+  sdk: ^3.8.1
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_svg: ^2.1.0
+  cupertino_icons: ^1.0.8
+  font_awesome_flutter: ^10.6.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+  flutter_lints: ^5.0.0
+
+flutter:
+
+  uses-material-design: true
+
+  assets:
+    - assets/SVGs/welcome SVGs/welcome 1.svg
+    - assets/SVGs/welcome SVGs/welcome 2.svg
+    - assets/SVGs/welcome SVGs/welcome 3.svg
+    - assets/SVGs/Logo/Logo.svg
+
+  fonts:
+    - family: Montserrat
+      fonts:
+        - asset: assets/static/Montserrat-Regular.ttf
+        - asset: assets/static/Montserrat-Bold.ttf
+          weight: 700
