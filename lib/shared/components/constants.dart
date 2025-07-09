@@ -87,6 +87,7 @@ Widget defaultReportcard({
   required String header,
   required String description,
   required String percentage,
+  required VoidCallback onPressed,
 }) => Container(
     width: width,
     height: height,
@@ -130,7 +131,7 @@ Widget defaultReportcard({
                     SizedBox(
                       height: 24,
                     ),
-                    reportCardButton(width: 120,function: (){}),
+                    reportCardButton(width: 120, function: onPressed,),
                   ],
                 ),
               ),
