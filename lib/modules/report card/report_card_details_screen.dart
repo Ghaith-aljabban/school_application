@@ -14,27 +14,32 @@ class ReportCardDetailsScreen extends StatelessWidget {
     final int maxOral = 10;
     final int maxQuiz = 20;
     final int maxExam = 70;
+    final int maxTotal = maxOral + maxQuiz + maxExam;
 
     double totalOral = 0;
     double totalQuiz = 0;
     double totalExam = 0;
+    double totalAllSubjects = 0;
     int subjectCount = reportCard.subject.length;
 
     for (var subject in reportCard.subject) {
       totalOral += subject.oralexam;
       totalQuiz += subject.quiz;
       totalExam += subject.exam;
+      totalAllSubjects += subject.oralexam + subject.quiz + subject.exam;
     }
 
     // Calculate averages
     double avgOral = subjectCount > 0 ? totalOral / subjectCount : 0;
     double avgQuiz = subjectCount > 0 ? totalQuiz / subjectCount : 0;
     double avgExam = subjectCount > 0 ? totalExam / subjectCount : 0;
+    double avgTotal = subjectCount > 0 ? totalAllSubjects / subjectCount : 0;
 
     // Calculate maximum possible totals
     int maxTotalOral = maxOral * subjectCount;
     int maxTotalQuiz = maxQuiz * subjectCount;
     int maxTotalExam = maxExam * subjectCount;
+    int maxOverallTotal = maxTotal * subjectCount;
 
     return Scaffold(
       appBar: AppBar(
@@ -69,10 +74,7 @@ class ReportCardDetailsScreen extends StatelessWidget {
             // Description
             Text(
               "Student report card in the ${reportCard.isFirstSemister ? 'first' : 'second'} Semester in ${reportCard.year}",
-              style: TextStyle(
-                fontSize: 16,
-                color: Colors.grey[600],
-              ),
+              style: TextStyle(fontSize: 16, color: Colors.grey[600]),
             ),
             const SizedBox(height: 8),
 
@@ -90,10 +92,7 @@ class ReportCardDetailsScreen extends StatelessWidget {
             // Details label
             const Text(
               "Details:",
-              style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-              ),
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 16),
 
@@ -103,12 +102,10 @@ class ReportCardDetailsScreen extends StatelessWidget {
                 return SingleChildScrollView(
                   scrollDirection: Axis.horizontal,
                   child: ConstrainedBox(
-                    constraints: BoxConstraints(
-                      minWidth: constraints.maxWidth,
-                    ),
+                    constraints: BoxConstraints(minWidth: constraints.maxWidth),
                     child: DataTable(
                       headingRowColor: MaterialStateProperty.resolveWith<Color>(
-                            (Set<MaterialState> states) => myLime,
+                        (Set<MaterialState> states) => myLime,
                       ),
                       columns: [
                         DataColumn(
@@ -130,46 +127,83 @@ class ReportCardDetailsScreen extends StatelessWidget {
                           numeric: true,
                           tooltip: "Exam (Max $maxExam)",
                         ),
+                        DataColumn(
+                          label: const Text("Total"),
+                          numeric: true,
+                          tooltip: "Total (Max $maxTotal)",
+                        ),
                       ],
                       rows: [
-                        ...reportCard.subject.map((subject) => DataRow(
-                          cells: [
-                            DataCell(
-                              ConstrainedBox(
-                                constraints: BoxConstraints(
-                                  maxWidth: constraints.maxWidth * 0.3, // Adjust as needed
+                        ...reportCard.subject.map(
+                          (subject) => DataRow(
+                            cells: [
+                              DataCell(
+                                ConstrainedBox(
+                                  constraints: BoxConstraints(
+                                    maxWidth: constraints.maxWidth * 0.3,
+                                  ),
+                                  child: Text(subject.name),
                                 ),
-                                child: Text(subject.name),
                               ),
-                            ),
-                            DataCell(Text("${subject.oralexam}/$maxOral")),
-                            DataCell(Text("${subject.quiz}/$maxQuiz")),
-                            DataCell(Text("${subject.exam}/$maxExam")),
-                          ],
-                        )),
+                              DataCell(Text("${subject.oralexam}/$maxOral")),
+                              DataCell(Text("${subject.quiz}/$maxQuiz")),
+                              DataCell(Text("${subject.exam}/$maxExam")),
+                              DataCell(
+                                Text(
+                                  "${(subject.oralexam + subject.quiz + subject.exam)}/$maxTotal",
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
                         DataRow(
                           cells: [
                             const DataCell(Text("Average")),
-                            DataCell(Text("${avgOral.toStringAsFixed(1)}/$maxOral")),
-                            DataCell(Text("${avgQuiz.toStringAsFixed(1)}/$maxQuiz")),
-                            DataCell(Text("${avgExam.toStringAsFixed(1)}/$maxExam")),
+                            DataCell(
+                              Text("${avgOral.toStringAsFixed(1)}/$maxOral"),
+                            ),
+                            DataCell(
+                              Text("${avgQuiz.toStringAsFixed(1)}/$maxQuiz"),
+                            ),
+                            DataCell(
+                              Text("${avgExam.toStringAsFixed(1)}/$maxExam"),
+                            ),
+                            DataCell(
+                              Text("${avgTotal.toStringAsFixed(1)}/$maxTotal"),
+                            ),
                           ],
                           color: MaterialStateProperty.resolveWith<Color?>(
-                                (Set<MaterialState> states) => Colors.grey[300],
+                            (Set<MaterialState> states) => Colors.grey[300],
                           ),
                         ),
                         DataRow(
                           cells: [
                             const DataCell(Text("Total")),
-                            DataCell(Text("${totalOral.toStringAsFixed(1)}/$maxTotalOral")),
-                            DataCell(Text("${totalQuiz.toStringAsFixed(1)}/$maxTotalQuiz")),
-                            DataCell(Text("${totalExam.toStringAsFixed(1)}/$maxTotalExam")),
+                            DataCell(
+                              Text(
+                                "${totalOral.toStringAsFixed(1)}/$maxTotalOral",
+                              ),
+                            ),
+                            DataCell(
+                              Text(
+                                "${totalQuiz.toStringAsFixed(1)}/$maxTotalQuiz",
+                              ),
+                            ),
+                            DataCell(
+                              Text(
+                                "${totalExam.toStringAsFixed(1)}/$maxTotalExam",
+                              ),
+                            ),
+                            DataCell(
+                              Text(
+                                "${totalAllSubjects.toStringAsFixed(1)}/$maxOverallTotal",
+                              ),
+                            ),
                           ],
                           color: MaterialStateProperty.resolveWith<Color?>(
-                                (Set<MaterialState> states) => Colors.grey[300],
+                            (Set<MaterialState> states) => Colors.grey[300],
                           ),
                         ),
-
                       ],
                       dataRowMinHeight: 40,
                       dataRowMaxHeight: 60,

@@ -15,11 +15,19 @@ class HomeScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Container(child: SvgPicture.asset('assets/SVGs/Logo/Logo.svg')),
-        actions: [IconButton(icon: Icon(Icons.notifications ,color: Colors.black), onPressed: (){
-          Navigator.of(context).push(
-            MaterialPageRoute(builder: (context) => const NotificationScreen()),
-          );
-        },), SizedBox(width: 27,)],
+        actions: [
+          IconButton(
+            icon: Icon(Icons.notifications, color: Colors.black),
+            onPressed: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (context) => const NotificationScreen(),
+                ),
+              );
+            },
+          ),
+          SizedBox(width: 27),
+        ],
       ),
       body: Container(
         padding: const EdgeInsets.all(21.0),
@@ -32,30 +40,39 @@ class HomeScreen extends StatelessWidget {
                 header: "Schedule",
                 icon: Icon(Icons.calendar_month, size: 40, color: Colors.white),
               ),
-              onTap: (){
+              onTap: () {
                 Navigator.of(context).push(
-                  MaterialPageRoute(builder: (context) => const ScheduleScreen()),
+                  MaterialPageRoute(
+                    builder: (context) => const ScheduleScreen(),
+                  ),
                 );
               },
             ),
             SizedBox(height: 20),
             GestureDetector(
-              onTap: (){
+              onTap: () {
                 Navigator.of(context).push(
-                  MaterialPageRoute(builder: (context) => const ReportCardHistoryScreen()),
+                  MaterialPageRoute(
+                    builder: (context) => const ReportCardHistoryScreen(),
+                  ),
                 );
               },
               child: defaultcard(
                 description:
                     "Check you upcoming exams and\ntests and preform it online",
                 header: "Report Card",
-                icon: Icon(FontAwesomeIcons.graduationCap, size: 40, color: Colors.white),
+                icon: Icon(
+                  FontAwesomeIcons.graduationCap,
+                  size: 40,
+                  color: Colors.white,
+                ),
               ),
             ),
             SizedBox(height: 20),
             defaultcard(
-              description: "Communicate directly with\nyour teachers",
-              header: "Student Behavor",
+              description:
+                  "Monitor student behavior and \ninform parents of problems.",
+              header: "Student Behavior",
               icon: Icon(FontAwesomeIcons.chair, size: 40, color: Colors.white),
             ),
           ],

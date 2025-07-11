@@ -11,14 +11,14 @@ class NotificationScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar:AppBar(
+      appBar: AppBar(
         leadingWidth: double.infinity,
         leading: GestureDetector(
           child: Row(
             children: [
-              SizedBox(width: 20,),
-              Icon(Icons.arrow_back_ios_new,color: myGreen,size: 35,),
-              Text("notification",style: greenHTextStyle,)
+              SizedBox(width: 20),
+              Icon(Icons.arrow_back_ios_new, color: myGreen, size: 35),
+              Text("Notification", style: greenHTextStyle),
             ],
           ), // ← Your custom icon
           onTap: () {
@@ -28,16 +28,20 @@ class NotificationScreen extends StatelessWidget {
       ),
       body: Padding(
         padding: const EdgeInsets.all(18.0),
-        child: ListView.builder(itemCount: ghaithNotification.length,itemBuilder: (context, index){return
-          Column(children: [
-            notificationCard(title: ghaithNotification[index].title,
-                description: ghaithNotification[index].description
-            ),
-            SizedBox(height: 20,)
-        ]);
-          }
-
-          ,),
+        child: ListView.builder(
+          itemCount: ghaithNotification.length,
+          itemBuilder: (context, index) {
+            return Column(
+              children: [
+                notificationCard(
+                  title: ghaithNotification[index].title,
+                  description: ghaithNotification[index].description,
+                ),
+                SizedBox(height: 20),
+              ],
+            );
+          },
+        ),
       ),
     );
   }
