@@ -1,18 +1,19 @@
-// ======== preform_preeexam_screen.dart ========
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:school_application/models/preeexam_question_model.dart';
+import 'package:school_application/shared/network/styles/colors.dart';
+import 'package:school_application/shared/network/styles/styles.dart';
 
 class QuizPage extends StatefulWidget {
   final List<ExamQuestion> questions;
   final bool timedMode;
-  final int? timePerQuestion; // in seconds
+  final int? totalExamTime; // in seconds
 
   const QuizPage({
     Key? key,
     required this.questions,
     this.timedMode = false,
-    this.timePerQuestion = 30,
+    this.totalExamTime = 3600, // Default to 1 hour
   }) : super(key: key);
 
   @override
@@ -31,23 +32,34 @@ class _QuizPageState extends State<QuizPage> {
   void initState() {
     super.initState();
     if (widget.timedMode) {
-      _timeRemaining = widget.timePerQuestion!;
+      _timeRemaining = widget.totalExamTime!;
       _startTimer();
     }
   }
 
   void _startTimer() {
+    _timer?.cancel();
     _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      if (!mounted) {
+        timer.cancel();
+        return;
+      }
+
       if (_timeRemaining > 0) {
         setState(() {
           _timeRemaining--;
         });
       } else {
-        // Time's up, move to next question
-        _timer?.cancel();
-        _checkAnswer();
+        timer.cancel();
+        _submitExam();
       }
     });
+  }
+
+  String _formatTime(int seconds) {
+    int minutes = (seconds / 60).floor();
+    int remainingSeconds = seconds % 60;
+    return '${minutes.toString().padLeft(2, '0')}:${remainingSeconds.toString().padLeft(2, '0')}';
   }
 
   void _checkAnswer() {
@@ -56,14 +68,12 @@ class _QuizPageState extends State<QuizPage> {
       score++;
     }
 
+    if (!mounted) return;
+
     setState(() {
       if (currentQuestionIndex < widget.questions.length - 1) {
         currentQuestionIndex++;
         selectedAnswerIndex = null;
-        if (widget.timedMode) {
-          _timeRemaining = widget.timePerQuestion!;
-          _startTimer();
-        }
       } else {
         _examCompleted = true;
         _showResults();
@@ -72,14 +82,21 @@ class _QuizPageState extends State<QuizPage> {
   }
 
   void _showResults() {
+    if (!mounted) return;
+
     showDialog(
       context: context,
       barrierDismissible: false,
       builder: (_) => AlertDialog(
-        title: const Text("Quiz Completed!"),
+        backgroundColor: myLime,
+        title: Text(
+          "Quiz Completed!",
+          style: flexableTextStyle(size: 20, color: myGreen, isBold: true),
+        ),
         content: Text(
           "Your score: $score/${widget.questions.length}\n"
           "Percentage: ${(score / widget.questions.length * 100).toStringAsFixed(1)}%",
+          style: flexableTextStyle(size: 16, color: myGreen, isBold: false),
         ),
         actions: [
           TextButton(
@@ -87,7 +104,10 @@ class _QuizPageState extends State<QuizPage> {
               Navigator.pop(context); // Close dialog
               Navigator.pop(context); // Return to exams list
             },
-            child: const Text("Finish"),
+            child: Text(
+              "Finish",
+              style: flexableTextStyle(size: 16, color: myGreen, isBold: true),
+            ),
           ),
         ],
       ),
@@ -108,29 +128,39 @@ class _QuizPageState extends State<QuizPage> {
   @override
   Widget build(BuildContext context) {
     if (_examCompleted) {
-      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+      return Scaffold(
+        backgroundColor: myLime,
+        body: Center(child: CircularProgressIndicator(color: myGreen)),
+      );
     }
 
     final question = widget.questions[currentQuestionIndex];
 
     return Scaffold(
+      backgroundColor: myLime,
       appBar: AppBar(
-        title: const Text("MC Quiz"),
+        backgroundColor: myLime,
+        title: Text(
+          "MC Quiz",
+          style: flexableTextStyle(size: 20, color: myGreen, isBold: true),
+        ),
         actions: [
           if (widget.timedMode)
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16.0),
               child: Center(
                 child: Text(
-                  "$_timeRemaining s",
-                  style: const TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
+                  _formatTime(_timeRemaining),
+                  style: flexableTextStyle(
+                    size: 18,
+                    color: _timeRemaining <= 60 ? Colors.red : myGreen,
+                    isBold: true,
                   ),
                 ),
               ),
             ),
         ],
+        iconTheme: IconThemeData(color: myGreen),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -139,15 +169,29 @@ class _QuizPageState extends State<QuizPage> {
           children: [
             Text(
               "Question ${currentQuestionIndex + 1} of ${widget.questions.length}",
-              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              style: flexableTextStyle(size: 18, color: myGreen, isBold: true),
             ),
             const SizedBox(height: 16),
-            Text(question.question, style: const TextStyle(fontSize: 20)),
+            Text(
+              question.question,
+              style: flexableTextStyle(
+                size: 20,
+                color: Colors.black,
+                isBold: false,
+              ),
+            ),
             const SizedBox(height: 20),
             ...List.generate(
               question.options.length,
               (index) => RadioListTile<int>(
-                title: Text(question.options[index]),
+                title: Text(
+                  question.options[index],
+                  style: flexableTextStyle(
+                    size: 16,
+                    color: Colors.black,
+                    isBold: false,
+                  ),
+                ),
                 value: index,
                 groupValue: selectedAnswerIndex,
                 onChanged: (value) {
@@ -155,6 +199,15 @@ class _QuizPageState extends State<QuizPage> {
                     selectedAnswerIndex = value;
                   });
                 },
+                activeColor: myGreen,
+                fillColor: MaterialStateProperty.resolveWith<Color>((
+                  Set<MaterialState> states,
+                ) {
+                  if (states.contains(MaterialState.selected)) {
+                    return myGreen;
+                  }
+                  return myGray;
+                }),
               ),
             ),
             const Spacer(),
@@ -167,21 +220,33 @@ class _QuizPageState extends State<QuizPage> {
                       setState(() {
                         currentQuestionIndex--;
                         selectedAnswerIndex = null;
-                        if (widget.timedMode) {
-                          _timer?.cancel();
-                          _timeRemaining = widget.timePerQuestion!;
-                          _startTimer();
-                        }
                       });
                     },
-                    child: const Text("Back"),
+                    style: ElevatedButton.styleFrom(backgroundColor: myGreen),
+                    child: Text(
+                      "Back",
+                      style: flexableTextStyle(
+                        size: 16,
+                        color: Colors.white,
+                        isBold: true,
+                      ),
+                    ),
                   ),
                 ElevatedButton(
                   onPressed: selectedAnswerIndex == null ? null : _checkAnswer,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: myGreen,
+                    disabledBackgroundColor: myLightGray,
+                  ),
                   child: Text(
                     currentQuestionIndex == widget.questions.length - 1
                         ? "Submit"
                         : "Next",
+                    style: flexableTextStyle(
+                      size: 16,
+                      color: Colors.white,
+                      isBold: true,
+                    ),
                   ),
                 ),
               ],
@@ -189,10 +254,16 @@ class _QuizPageState extends State<QuizPage> {
           ],
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _submitExam,
-        tooltip: 'Submit Exam',
-        child: const Icon(Icons.done),
+      floatingActionButton: Padding(
+        padding: const EdgeInsets.only(
+          bottom: 40.0,
+        ), // Adjust this value as needed
+        child: FloatingActionButton(
+          onPressed: _submitExam,
+          tooltip: 'Submit Exam',
+          backgroundColor: myGreen,
+          child: const Icon(Icons.done, color: Colors.white),
+        ),
       ),
     );
   }

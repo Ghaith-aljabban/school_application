@@ -69,7 +69,7 @@ class ExamListScreen extends StatelessWidget {
 
   void _showExamOptions(BuildContext context, Exam exam) {
     bool timedMode = false;
-    int timePerQuestion = 30;
+    double examDuration = 60; // Default to 1 hour
 
     showDialog(
       context: context,
@@ -77,13 +77,29 @@ class ExamListScreen extends StatelessWidget {
         return StatefulBuilder(
           builder: (context, setState) {
             return AlertDialog(
-              title: const Text("Exam Options"),
+              backgroundColor: myLime,
+              title: Text(
+                "Exam Options",
+                style: flexableTextStyle(
+                  size: 20,
+                  color: myGreen,
+                  isBold: true,
+                ),
+              ),
               content: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      const Text("Timed Mode"),
+                      Text(
+                        "Timed Mode",
+                        style: flexableTextStyle(
+                          size: 16,
+                          color: myGreen,
+                          isBold: false,
+                        ),
+                      ),
                       Switch(
                         value: timedMode,
                         onChanged: (value) {
@@ -91,6 +107,7 @@ class ExamListScreen extends StatelessWidget {
                             timedMode = value;
                           });
                         },
+                        activeColor: myGreen,
                       ),
                     ],
                   ),
@@ -98,20 +115,36 @@ class ExamListScreen extends StatelessWidget {
                     Column(
                       children: [
                         const SizedBox(height: 16),
-                        const Text("Time per question (seconds)"),
+                        Text(
+                          "Total exam duration (minutes)",
+                          style: flexableTextStyle(
+                            size: 16,
+                            color: myGreen,
+                            isBold: false,
+                          ),
+                        ),
                         Slider(
-                          value: timePerQuestion.toDouble(),
-                          min: 10,
+                          value: examDuration,
+                          min: 20,
                           max: 120,
-                          divisions: 11,
-                          label: timePerQuestion.toString(),
+                          divisions: 10,
+                          label: "${examDuration.toInt()} minutes",
                           onChanged: (value) {
                             setState(() {
-                              timePerQuestion = value.toInt();
+                              examDuration = value;
                             });
                           },
+                          activeColor: myGreen,
+                          inactiveColor: myLightGray,
                         ),
-                        Text("$timePerQuestion seconds"),
+                        Text(
+                          "${examDuration.toInt()} minutes",
+                          style: flexableTextStyle(
+                            size: 16,
+                            color: myGreen,
+                            isBold: true,
+                          ),
+                        ),
                       ],
                     ),
                 ],
@@ -119,7 +152,14 @@ class ExamListScreen extends StatelessWidget {
               actions: [
                 TextButton(
                   onPressed: () => Navigator.pop(context),
-                  child: const Text("Cancel"),
+                  child: Text(
+                    "Cancel",
+                    style: flexableTextStyle(
+                      size: 16,
+                      color: myGreen,
+                      isBold: false,
+                    ),
+                  ),
                 ),
                 TextButton(
                   onPressed: () {
@@ -130,12 +170,20 @@ class ExamListScreen extends StatelessWidget {
                         builder: (context) => QuizPage(
                           questions: exam.questions,
                           timedMode: timedMode,
-                          timePerQuestion: timePerQuestion,
+                          totalExamTime:
+                              examDuration.toInt() * 60, // Convert to seconds
                         ),
                       ),
                     );
                   },
-                  child: const Text("Start Exam"),
+                  child: Text(
+                    "Start Exam",
+                    style: flexableTextStyle(
+                      size: 16,
+                      color: myGreen,
+                      isBold: true,
+                    ),
+                  ),
                 ),
               ],
             );
