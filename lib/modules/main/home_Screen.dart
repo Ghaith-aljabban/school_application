@@ -3,6 +3,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:school_application/modules/main/notification_screen.dart';
 import 'package:school_application/modules/schedule/schedule_Screen.dart';
+import 'package:school_application/modules/student%20behavior/student_behavior_screen.dart';
 
 import '../../shared/components/components.dart';
 import '../report card/report_card_history_screen.dart';
@@ -69,11 +70,24 @@ class HomeScreen extends StatelessWidget {
               ),
             ),
             SizedBox(height: 20),
-            defaultcard(
-              description:
-                  "Monitor student behavior and \ninform parents of problems.",
-              header: "Student Behavior",
-              icon: Icon(FontAwesomeIcons.chair, size: 40, color: Colors.white),
+            GestureDetector(
+              onTap: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => const StudentBehaviorScreen(),
+                  ),
+                );
+              },
+              child: defaultcard(
+                description:
+                    "Monitor student behavior and \ninform parents of problems.",
+                header: "Student Behavior",
+                icon: Icon(
+                  FontAwesomeIcons.chair,
+                  size: 40,
+                  color: Colors.white,
+                ),
+              ),
             ),
           ],
         ),

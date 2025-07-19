@@ -7,7 +7,7 @@ TextStyle headerTextStyle = TextStyle(
   fontWeight: FontWeight.bold,
 );
 TextStyle greenHTextStyle = TextStyle(
-  fontSize: 35,
+  fontSize: 30,
   fontFamily: 'Montserrat',
   fontWeight: FontWeight.bold,
   color: myGreen,

@@ -3,7 +3,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:school_application/models/subjects_model.dart';
 import 'package:school_application/shared/components/components.dart';
 
-import '../preeexam/subject_preeexam_screen.dart';
+import '../preeexam/subject_preeexam_years_screen.dart';
 import 'notification_screen.dart';
 
 class PreeexamScreen extends StatelessWidget {
@@ -19,7 +19,9 @@ class PreeexamScreen extends StatelessWidget {
             icon: Icon(Icons.notifications, color: Colors.black),
             onPressed: () {
               Navigator.of(context).push(
-                MaterialPageRoute(builder: (context) => const NotificationScreen()),
+                MaterialPageRoute(
+                  builder: (context) => const NotificationScreen(),
+                ),
               );
             },
           ),
@@ -41,14 +43,14 @@ class PreeexamScreen extends StatelessWidget {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => SubjectPreeexamScreen(name: mySubjects[index].name),
+                    builder: (context) =>
+                        SubjectPreeexamScreen(name: mySubjects[index].name),
                   ),
                 );
               },
               child: SubjectWidget(
                 name: mySubjects[index].name,
                 icon: mySubjects[index].icon,
-
               ),
             );
           },
