@@ -1,7 +1,7 @@
 // ======== subject_preeexam_years_screen.dart ========
 import 'package:flutter/material.dart';
-import 'package:school_application/models/previous_exams_model.dart';
-import 'package:school_application/modules/preeexam/subject_preeexam_avalibe_screen.dart';
+import 'package:school_application/Models/previous_exams_model.dart';
+import 'package:school_application/Pages/preeexam/subject_preeexam_avalibe_screen.dart';
 
 import '../../shared/components/components.dart';
 import '../../shared/network/styles/colors.dart';

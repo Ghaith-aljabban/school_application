@@ -1,6 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:school_application/models/preeexam_question_model.dart';
+import 'package:school_application/Models/preeexam_question_model.dart';
 import 'package:school_application/shared/network/styles/colors.dart';
 import 'package:school_application/shared/network/styles/styles.dart';
 
@@ -89,6 +89,7 @@ class _QuizPageState extends State<QuizPage> {
       barrierDismissible: false,
       builder: (_) => AlertDialog(
         backgroundColor: myLime,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
         title: Text(
           "Quiz Completed!",
           style: flexableTextStyle(size: 20, color: myGreen, isBold: true),
@@ -101,11 +102,49 @@ class _QuizPageState extends State<QuizPage> {
         actions: [
           TextButton(
             onPressed: () {
-              Navigator.pop(context); // Close dialog
-              Navigator.pop(context); // Return to exams list
+              Navigator.pop(context);
+              Navigator.pop(context);
             },
             child: Text(
               "Finish",
+              style: flexableTextStyle(size: 16, color: myGreen, isBold: true),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _confirmSubmit() {
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        backgroundColor: myLime,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+        title: Text(
+          "Submit Quiz?",
+          style: flexableTextStyle(size: 20, color: myGreen, isBold: true),
+        ),
+        content: Text(
+          "Are you sure you want to submit your answers?",
+          style: flexableTextStyle(size: 16, color: myGreen, isBold: false),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: Text(
+              "Cancel",
+              style: flexableTextStyle(size: 16, color: myGreen, isBold: true),
+            ),
+          ),
+          TextButton(
+            onPressed: () {
+              Navigator.pop(ctx);
+              _checkAnswer();
+              _submitExam();
+            },
+            child: Text(
+              "Submit",
               style: flexableTextStyle(size: 16, color: myGreen, isBold: true),
             ),
           ),
@@ -181,35 +220,62 @@ class _QuizPageState extends State<QuizPage> {
               ),
             ),
             const SizedBox(height: 20),
-            ...List.generate(
-              question.options.length,
-              (index) => RadioListTile<int>(
-                title: Text(
-                  question.options[index],
-                  style: flexableTextStyle(
-                    size: 16,
-                    color: Colors.black,
-                    isBold: false,
-                  ),
-                ),
-                value: index,
-                groupValue: selectedAnswerIndex,
-                onChanged: (value) {
+            // Options with uncheck support
+            ...List.generate(question.options.length, (index) {
+              final isSelected = selectedAnswerIndex == index;
+              return GestureDetector(
+                onTap: () {
                   setState(() {
-                    selectedAnswerIndex = value;
+                    if (selectedAnswerIndex == index) {
+                      selectedAnswerIndex = null; // Uncheck
+                    } else {
+                      selectedAnswerIndex = index;
+                    }
                   });
                 },
-                activeColor: myGreen,
-                fillColor: MaterialStateProperty.resolveWith<Color>((
-                  Set<MaterialState> states,
-                ) {
-                  if (states.contains(MaterialState.selected)) {
-                    return myGreen;
-                  }
-                  return myGray;
-                }),
-              ),
-            ),
+                child: Container(
+                  margin: const EdgeInsets.symmetric(vertical: 5),
+                  padding: const EdgeInsets.all(10),
+                  decoration: BoxDecoration(
+                    color: isSelected ? myGreen.withOpacity(0.1) : Colors.white,
+                    borderRadius: BorderRadius.circular(10),
+                    border: Border.all(
+                      color: isSelected ? myGreen : myGray,
+                      width: 2,
+                    ),
+                  ),
+                  child: Row(
+                    children: [
+                      Radio<int>(
+                        value: index,
+                        groupValue: selectedAnswerIndex,
+                        onChanged: (value) {
+                          setState(() {
+                            if (selectedAnswerIndex == value) {
+                              selectedAnswerIndex = null;
+                            } else {
+                              selectedAnswerIndex = value;
+                            }
+                          });
+                        },
+                        activeColor: myGreen,
+                      ),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: Text(
+                          question.options[index],
+                          style: flexableTextStyle(
+                            size: 16,
+                            color: Colors.black,
+                            isBold: false,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              );
+            }),
             const Spacer(),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -233,11 +299,14 @@ class _QuizPageState extends State<QuizPage> {
                     ),
                   ),
                 ElevatedButton(
-                  onPressed: selectedAnswerIndex == null ? null : _checkAnswer,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: myGreen,
-                    disabledBackgroundColor: myLightGray,
-                  ),
+                  onPressed: () {
+                    if (currentQuestionIndex == widget.questions.length - 1) {
+                      _confirmSubmit();
+                    } else {
+                      _checkAnswer(); // Allows skipping
+                    }
+                  },
+                  style: ElevatedButton.styleFrom(backgroundColor: myGreen),
                   child: Text(
                     currentQuestionIndex == widget.questions.length - 1
                         ? "Submit"
@@ -252,17 +321,6 @@ class _QuizPageState extends State<QuizPage> {
               ],
             ),
           ],
-        ),
-      ),
-      floatingActionButton: Padding(
-        padding: const EdgeInsets.only(
-          bottom: 40.0,
-        ), // Adjust this value as needed
-        child: FloatingActionButton(
-          onPressed: _submitExam,
-          tooltip: 'Submit Exam',
-          backgroundColor: myGreen,
-          child: const Icon(Icons.done, color: Colors.white),
         ),
       ),
     );

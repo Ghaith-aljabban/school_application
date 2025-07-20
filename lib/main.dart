@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'layout/main_menu.dart';
-import 'modules/welcome/welcome_screen.dart';
+import 'Pages/welcome/welcome_screen.dart';
 
 void main() {
   runApp(const MyApp());
@@ -16,7 +16,7 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         appBarTheme: AppBarTheme(
-          backgroundColor: Colors.white     // Optional: text/icon color
+          backgroundColor: Colors.white, // Optional: text/icon color
         ),
         bottomNavigationBarTheme: BottomNavigationBarThemeData(
           backgroundColor: Colors.white,

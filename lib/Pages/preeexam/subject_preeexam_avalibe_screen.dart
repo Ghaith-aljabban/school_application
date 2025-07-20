@@ -1,7 +1,7 @@
 // ======== exam_list_screen.dart (new file) ========
 import 'package:flutter/material.dart';
-import 'package:school_application/models/previous_exams_model.dart';
-import 'package:school_application/modules/preeexam/preform_preeexam_screen.dart';
+import 'package:school_application/Models/previous_exams_model.dart';
+import 'package:school_application/Pages/preeexam/preform_preeexam_screen.dart';
 
 import '../../shared/components/components.dart';
 import '../../shared/network/styles/colors.dart';

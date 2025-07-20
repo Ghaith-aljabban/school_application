@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:school_application/models/exam_date_model.dart';
+import 'package:school_application/Models/exam_date_model.dart';
 
 import '../../shared/network/styles/colors.dart';
 import '../../shared/network/styles/styles.dart';
@@ -28,23 +28,33 @@ class ExamSchedule extends StatelessWidget {
       body: Padding(
         padding: const EdgeInsets.all(18.0),
         child: ListView.builder(
-          itemCount: myExams.length+1,
+          itemCount: myExams.length + 1,
           itemBuilder: (context, index) {
             if (index == 0) {
               // First item: display the name
               return Padding(
                 padding: const EdgeInsets.all(16.0),
-                child: Text("Upcoming Exams", style: flexableTextStyle(size: 30, color: Colors.black, isBold: true)),
+                child: Text(
+                  "Upcoming Exams",
+                  style: flexableTextStyle(
+                    size: 30,
+                    color: Colors.black,
+                    isBold: true,
+                  ),
+                ),
               );
             }
             return Column(
               children: [
                 ExamDateCard(
-                  title: myExams[index-1].subject.name,
+                  title: myExams[index - 1].subject.name,
                   description:
-                      myExams[index-1].date+" "+
-                      myExams[index-1].timeStart + " - " + myExams[index-1].timeEnd,
-                  icon: myExams[index-1].subject.icon,
+                      myExams[index - 1].date +
+                      " " +
+                      myExams[index - 1].timeStart +
+                      " - " +
+                      myExams[index - 1].timeEnd,
+                  icon: myExams[index - 1].subject.icon,
                 ),
               ],
             );

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:school_application/models/notification_model.dart';
+import 'package:school_application/Models/notification_model.dart';
 import 'package:school_application/shared/components/components.dart';
 
 import '../../shared/network/styles/colors.dart';

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:school_application/modules/main/account_screen.dart';
-import 'package:school_application/modules/main/home_Screen.dart';
-import 'package:school_application/modules/main/preeexam_screen.dart';
+import 'package:school_application/Pages/main/account_screen.dart';
+import 'package:school_application/Pages/main/home_Screen.dart';
+import 'package:school_application/Pages/main/preeexam_screen.dart';
 import 'package:school_application/shared/network/styles/colors.dart';
 
 int _selectedIndex = 0;

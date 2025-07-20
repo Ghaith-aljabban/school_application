@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:school_application/models/student_behavior.dart';
+import 'package:school_application/Models/student_behavior.dart';
 import 'package:school_application/shared/network/styles/colors.dart';
 import 'package:school_application/shared/network/styles/styles.dart';
 

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:school_application/models/subjects_model.dart';
+import 'package:school_application/Models/subjects_model.dart';
 import 'package:school_application/shared/components/components.dart';
 
 import '../preeexam/subject_preeexam_years_screen.dart';

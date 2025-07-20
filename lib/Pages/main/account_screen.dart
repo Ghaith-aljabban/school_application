@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:school_application/models/user_model.dart';
+import 'package:school_application/Models/user_model.dart';
 import 'package:school_application/shared/components/components.dart';
 import 'package:school_application/shared/network/styles/colors.dart';
 import 'package:school_application/shared/network/styles/styles.dart';

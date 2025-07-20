@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:school_application/shared/network/styles/colors.dart';
 import 'package:school_application/shared/network/styles/styles.dart';
 
-import '../../models/daily_schedule_model.dart';
+import '../../Models/daily_schedule_model.dart';
 
 Widget DailyScheduleWidget({required subjectTime subject}) => Row(
   crossAxisAlignment: CrossAxisAlignment.start,
@@ -16,10 +16,18 @@ Widget DailyScheduleWidget({required subjectTime subject}) => Row(
         alignment: Alignment.topCenter,
         child: Column(
           children: [
-            Text(subject.timeStart,
-                style: flexableTextStyle(color: Colors.black, size: 14, isBold: true)),
-            Text(subject.timeEnd,
-                style: flexableTextStyle(color: myGray, size: 12, isBold: false)),
+            Text(
+              subject.timeStart,
+              style: flexableTextStyle(
+                color: Colors.black,
+                size: 14,
+                isBold: true,
+              ),
+            ),
+            Text(
+              subject.timeEnd,
+              style: flexableTextStyle(color: myGray, size: 12, isBold: false),
+            ),
           ],
         ),
       ),
@@ -44,7 +52,10 @@ Widget DailyScheduleWidget({required subjectTime subject}) => Row(
               Container(
                 height: 15,
                 width: 15,
-                decoration: BoxDecoration(color: myGreen, shape: BoxShape.circle),
+                decoration: BoxDecoration(
+                  color: myGreen,
+                  shape: BoxShape.circle,
+                ),
               ),
             ],
           ),
@@ -61,8 +72,14 @@ Widget DailyScheduleWidget({required subjectTime subject}) => Row(
         width: 300,
         decoration: defaultBoxDecorated,
         child: Center(
-          child: Text(subject.subjectName,
-              style: flexableTextStyle(color: Colors.black, size: 16, isBold: true)),
+          child: Text(
+            subject.subjectName,
+            style: flexableTextStyle(
+              color: Colors.black,
+              size: 16,
+              isBold: true,
+            ),
+          ),
         ),
       ),
     ),
@@ -80,10 +97,18 @@ Widget DailyScheduleWidgetNotSelected({required subjectTime subject}) => Row(
         alignment: Alignment.topCenter,
         child: Column(
           children: [
-            Text(subject.timeStart,
-                style: flexableTextStyle(color: Colors.black, size: 14, isBold: true)),
-            Text(subject.timeEnd,
-                style: flexableTextStyle(color: myGray, size: 12, isBold: false)),
+            Text(
+              subject.timeStart,
+              style: flexableTextStyle(
+                color: Colors.black,
+                size: 14,
+                isBold: true,
+              ),
+            ),
+            Text(
+              subject.timeEnd,
+              style: flexableTextStyle(color: myGray, size: 12, isBold: false),
+            ),
           ],
         ),
       ),
@@ -96,10 +121,7 @@ Widget DailyScheduleWidgetNotSelected({required subjectTime subject}) => Row(
           Stack(
             alignment: AlignmentDirectional.center,
             children: [
-              Container(
-                height: 25,
-                width: 25,
-              ),
+              Container(height: 25, width: 25),
               Container(
                 height: 15,
                 width: 15,
@@ -123,8 +145,14 @@ Widget DailyScheduleWidgetNotSelected({required subjectTime subject}) => Row(
         width: 300,
         decoration: defaultBoxDecorated2,
         child: Center(
-          child: Text(subject.subjectName,
-              style: flexableTextStyle(color: Colors.black, size: 16, isBold: false)),
+          child: Text(
+            subject.subjectName,
+            style: flexableTextStyle(
+              color: Colors.black,
+              size: 16,
+              isBold: false,
+            ),
+          ),
         ),
       ),
     ),

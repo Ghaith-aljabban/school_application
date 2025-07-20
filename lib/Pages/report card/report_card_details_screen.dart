@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:school_application/models/report_card_model.dart';
+import 'package:school_application/Models/report_card_model.dart';
 import 'package:school_application/shared/network/styles/colors.dart';
 import 'package:school_application/shared/network/styles/styles.dart';
 

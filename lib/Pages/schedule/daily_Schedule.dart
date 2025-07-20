@@ -1,8 +1,8 @@
 // daily_Schedule.dart
 import 'package:flutter/material.dart';
-import 'package:school_application/modules/schedule/daily_Schedule_Widget.dart';
+import 'package:school_application/Pages/schedule/daily_Schedule_Widget.dart';
 
-import '../../models/daily_schedule_model.dart';
+import '../../Models/daily_schedule_model.dart';
 import '../../shared/network/styles/colors.dart';
 import '../../shared/network/styles/styles.dart';
 
@@ -71,14 +71,16 @@ class _DailyScheduleState extends State<DailySchedule> {
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Text(day.weekDay.substring(0, 3), // Show short day
+                            Text(
+                              day.weekDay.substring(0, 3), // Show short day
                               style: flexableTextStyle(
                                 color: isSelected ? myGreen : Colors.black,
                                 size: 14,
                                 isBold: isSelected,
                               ),
                             ),
-                            Text(day.dateInMonth,
+                            Text(
+                              day.dateInMonth,
                               style: flexableTextStyle(
                                 color: isSelected ? myGreen : myGray,
                                 size: 12,

@@ -1,5 +1,5 @@
 // ======== previous_exams_model.dart ========
-import 'package:school_application/models/preeexam_question_model.dart';
+import 'package:school_application/Models/preeexam_question_model.dart';
 
 class PreviousExamsByYear {
   final String date;
