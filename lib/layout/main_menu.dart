@@ -3,6 +3,8 @@ import 'package:flutter/services.dart';
 import 'package:school_application/Pages/main/account_screen.dart';
 import 'package:school_application/Pages/main/home_Screen.dart';
 import 'package:school_application/Pages/main/preeexam_screen.dart';
+import 'package:school_application/main.dart';
+import 'package:school_application/services/user_service.dart';
 import 'package:school_application/shared/network/styles/colors.dart';
 
 int _selectedIndex = 0;
@@ -23,6 +25,7 @@ class MainMenu extends StatefulWidget {
 class _MainMenuState extends State<MainMenu> {
   @override
   void initState() {
+    super.initState();
     SystemChrome.setSystemUIOverlayStyle(
       const SystemUiOverlayStyle(
         systemNavigationBarColor:
@@ -109,6 +112,9 @@ class _MainMenuState extends State<MainMenu> {
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
+      if(index == 3){
+        UserService.getOne(studentID, token);
+      }
     });
   }
 }

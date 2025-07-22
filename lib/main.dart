@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:school_application/Pages/login/login_screen.dart';
 
 import 'layout/main_menu.dart';
-import 'Pages/welcome/welcome_screen.dart';
-
+late String token;
+late int studentID;
 void main() {
   runApp(const MyApp());
 }
@@ -24,7 +25,11 @@ class MyApp extends StatelessWidget {
         scaffoldBackgroundColor: Colors.white, // Set your desired color here
       ),
       title: 'Flutter Demo',
-      home: MainMenu(),
+      home: LoginScreen(),
     );
   }
+}
+String consUrl(String relativePath) {
+  const baseUrl = 'http://192.168.1.106:3000/api/';
+  return baseUrl + relativePath;
 }

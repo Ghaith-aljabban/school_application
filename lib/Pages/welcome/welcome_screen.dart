@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:school_application/Pages/welcome/welcome_screen2.dart';
-import 'package:school_application/shared/network/styles/colors.dart';
 
 import '../../shared/components/components.dart';
 import '../../shared/network/styles/styles.dart';

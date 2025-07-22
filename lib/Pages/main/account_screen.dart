@@ -4,9 +4,14 @@ import 'package:school_application/shared/components/components.dart';
 import 'package:school_application/shared/network/styles/colors.dart';
 import 'package:school_application/shared/network/styles/styles.dart';
 
-class AccountScreen extends StatelessWidget {
+class AccountScreen extends StatefulWidget {
   const AccountScreen({super.key});
 
+  @override
+  State<AccountScreen> createState() => _AccountScreenState();
+}
+
+class _AccountScreenState extends State<AccountScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(

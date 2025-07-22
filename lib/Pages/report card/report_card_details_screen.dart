@@ -23,10 +23,11 @@ class ReportCardDetailsScreen extends StatelessWidget {
     int subjectCount = reportCard.subject.length;
 
     for (var subject in reportCard.subject) {
-      totalOral += subject.oralexam;
-      totalQuiz += subject.quiz;
-      totalExam += subject.exam;
-      totalAllSubjects += subject.oralexam + subject.quiz + subject.exam;
+      totalOral += subject.oralexam ?? 0;
+      totalQuiz += subject.quiz ?? 0;
+      totalExam += subject.exam ?? 0;
+      totalAllSubjects +=
+          subject.oralexam ?? 0 + (subject.quiz ?? 0) + (subject.exam ?? 0);
     }
 
     // Calculate averages
@@ -145,12 +146,30 @@ class ReportCardDetailsScreen extends StatelessWidget {
                                   child: Text(subject.name),
                                 ),
                               ),
-                              DataCell(Text("${subject.oralexam}/$maxOral")),
-                              DataCell(Text("${subject.quiz}/$maxQuiz")),
-                              DataCell(Text("${subject.exam}/$maxExam")),
                               DataCell(
                                 Text(
-                                  "${(subject.oralexam + subject.quiz + subject.exam)}/$maxTotal",
+                                  subject.oralexam != null
+                                      ? "${subject.oralexam}/$maxOral"
+                                      : "N/A",
+                                ),
+                              ),
+                              DataCell(
+                                Text(
+                                  subject.quiz != null
+                                      ? "${subject.quiz}/$maxQuiz"
+                                      : "N/A",
+                                ),
+                              ),
+                              DataCell(
+                                Text(
+                                  subject.exam != null
+                                      ? "${subject.exam}/$maxExam"
+                                      : "N/A",
+                                ),
+                              ),
+                              DataCell(
+                                Text(
+                                  "${((subject.oralexam ?? 0) + (subject.quiz ?? 0) + (subject.exam ?? 0))}/$maxTotal",
                                 ),
                               ),
                             ],

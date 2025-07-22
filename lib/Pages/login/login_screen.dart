@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:school_application/Models/user_model.dart';
 import 'package:school_application/layout/main_menu.dart';
+import 'package:school_application/services/auth_service.dart';
 import 'package:school_application/shared/components/constants.dart';
+import '../../Models/auth_model.dart';
 import '../../shared/components/components.dart';
 import '../../shared/network/styles/colors.dart';
 import '../../shared/network/styles/styles.dart';
-import '../welcome/welcome_screen.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -17,13 +19,6 @@ class _LoginScreenState extends State<LoginScreen> {
   bool _obscurePassword = true;
   final TextEditingController _studentNameController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-
-  @override
-  void dispose() {
-    _studentNameController.dispose();
-    _passwordController.dispose();
-    super.dispose();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -91,14 +86,24 @@ class _LoginScreenState extends State<LoginScreen> {
                 child: defaultButton(
                   width: double.infinity,
                   height: 50,
-                  function: () {
-                    // You can now access:
-                    // _studentNameController.text
-                    // _passwordController.text
-                    Navigator.of(context).pushAndRemoveUntil(
-                      MaterialPageRoute(builder: (context) => const MainMenu()),
-                          (Route<dynamic> route) => false,
-                    );
+                  function: () async {
+                    print('trrt5de5dede54d5d54d54d54d45d45d54d5d54d54d5d445d54d54d');
+                    bool? islogged = await AuthService.login(authModel: AuthModel(email: _studentNameController.text,password: _passwordController.text));
+                    if(islogged == true){
+                      Navigator.of(context).pushAndRemoveUntil(
+                        MaterialPageRoute(builder: (context) => const MainMenu()),
+                            (Route<dynamic> route) => false,
+                      );
+                    }
+                    else{
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text(
+                            'ttft',
+                          ),
+                        ),
+                      );
+                    }
                   },
                   text: 'SUBMIT',
                 ),

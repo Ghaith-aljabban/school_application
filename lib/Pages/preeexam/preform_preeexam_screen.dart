@@ -104,6 +104,7 @@ class _QuizPageState extends State<QuizPage> {
             onPressed: () {
               Navigator.pop(context);
               Navigator.pop(context);
+              Navigator.pop(context);
             },
             child: Text(
               "Finish",
@@ -118,7 +119,7 @@ class _QuizPageState extends State<QuizPage> {
   void _confirmSubmit() {
     showDialog(
       context: context,
-      builder: (ctx) => AlertDialog(
+      builder: (_) => AlertDialog(
         backgroundColor: myLime,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
         title: Text(
@@ -131,7 +132,7 @@ class _QuizPageState extends State<QuizPage> {
         ),
         actions: [
           TextButton(
-            onPressed: () => Navigator.pop(ctx),
+            onPressed: () => Navigator.pop(context),
             child: Text(
               "Cancel",
               style: flexableTextStyle(size: 16, color: myGreen, isBold: true),
@@ -139,7 +140,7 @@ class _QuizPageState extends State<QuizPage> {
           ),
           TextButton(
             onPressed: () {
-              Navigator.pop(ctx);
+              Navigator.pop(context);
               _checkAnswer();
               _submitExam();
             },
@@ -166,13 +167,6 @@ class _QuizPageState extends State<QuizPage> {
 
   @override
   Widget build(BuildContext context) {
-    if (_examCompleted) {
-      return Scaffold(
-        backgroundColor: myLime,
-        body: Center(child: CircularProgressIndicator(color: myGreen)),
-      );
-    }
-
     final question = widget.questions[currentQuestionIndex];
 
     return Scaffold(
@@ -325,4 +319,16 @@ class _QuizPageState extends State<QuizPage> {
       ),
     );
   }
+}
+
+void printRouteStack(BuildContext context) {
+  String stack = "Current Navigation Stack:\n";
+  int level = 0;
+
+  Navigator.of(context).popUntil((route) {
+    stack += "[${level++}] ${route.settings.name ?? route.runtimeType}\n";
+    return false; // Continue through entire stack
+  });
+
+  debugPrint(stack);
 }
