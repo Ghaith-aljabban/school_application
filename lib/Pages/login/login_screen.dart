@@ -16,6 +16,7 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
+  bool isLoading = false;
   bool _obscurePassword = true;
   final TextEditingController _studentNameController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
@@ -81,14 +82,27 @@ class _LoginScreenState extends State<LoginScreen> {
               ),
               const SizedBox(height: bottomSpacing),
 
-              // Submit Button
+
               Center(
-                child: defaultButton(
+                child: isLoading
+                    ? CircularProgressIndicator(color: myGreen)
+                    : defaultButton(
                   width: double.infinity,
                   height: 50,
                   function: () async {
                     print('trrt5de5dede54d5d54d54d54d45d45d54d5d54d54d5d445d54d54d');
-                    bool? islogged = await AuthService.login(authModel: AuthModel(email: _studentNameController.text,password: _passwordController.text));
+                    setState(() {
+                      isLoading = true;
+                    });
+                    bool? islogged = await AuthService.login(
+                        authModel: AuthModel(
+                            email: _studentNameController.text,
+                            password: _passwordController.text
+                        )
+                    );
+                    setState(() {
+                      isLoading = false;
+                    });
                     if(islogged == true){
                       Navigator.of(context).pushAndRemoveUntil(
                         MaterialPageRoute(builder: (context) => const MainMenu()),
@@ -98,9 +112,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     else{
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(
-                          content: Text(
-                            'ttft',
-                          ),
+                          content: Text('check your internet connection and try again'),
                         ),
                       );
                     }
