@@ -1,6 +1,7 @@
 // daily_Schedule.dart
 import 'package:flutter/material.dart';
 import 'package:school_application/Pages/schedule/daily_Schedule_Widget.dart';
+import 'package:school_application/services/schedule_service.dart';
 
 import '../../Models/daily_schedule_model.dart';
 import '../../shared/network/styles/colors.dart';
@@ -12,23 +13,17 @@ class DailySchedule extends StatefulWidget {
 }
 
 class _DailyScheduleState extends State<DailySchedule> {
-  int selectedDayIndex = 0; // Default to first day in demoData
-  Map<int, int> selectedSubjectIndex = {}; // Track selected subject per day
+  int selectedDayIndex = 0;
+  Map<int, int> selectedSubjectIndex = {};
 
   @override
   void initState() {
     super.initState();
-    // Initialize with first subject selected for each day
-    for (int i = 0; i < demoData.length; i++) {
-      selectedSubjectIndex[i] = 0;
-    }
+    selectedSubjectIndex = {};
   }
 
   @override
   Widget build(BuildContext context) {
-    dailySubject selectedDay = demoData[selectedDayIndex];
-    int currentSelectedSubject = selectedSubjectIndex[selectedDayIndex] ?? 0;
-
     return Scaffold(
       appBar: AppBar(
         leadingWidth: double.infinity,
@@ -40,86 +35,105 @@ class _DailyScheduleState extends State<DailySchedule> {
               Text("Daily Schedule", style: greenHTextStyle),
             ],
           ),
-          onTap: () {
-            Navigator.of(context).pop();
-          },
+          onTap: () => Navigator.pop(context),
         ),
       ),
-      body: Container(
-        child: Padding(
-          padding: const EdgeInsets.all(15.0),
-          child: ListView(
-            children: [
-              SizedBox(
-                height: 100,
-                child: ListView.builder(
-                  scrollDirection: Axis.horizontal,
-                  itemCount: demoData.length,
-                  itemBuilder: (context, index) {
-                    final day = demoData[index];
-                    final isSelected = index == selectedDayIndex;
+      body: FutureBuilder<List<DailySubject>>(
+        future: ScheduleService.fetchSchedule(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Center(child: CircularProgressIndicator(color: myGreen));
+          }
 
-                    return GestureDetector(
-                      onTap: () {
-                        setState(() {
-                          selectedDayIndex = index;
-                        });
-                      },
-                      child: Container(
-                        width: 70,
-                        height: 70,
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Text(
-                              day.weekDay.substring(0, 3), // Show short day
-                              style: flexableTextStyle(
-                                color: isSelected ? myGreen : Colors.black,
-                                size: 14,
-                                isBold: isSelected,
-                              ),
+          if (snapshot.hasError) {
+            return Center(child: Text('Error loading schedule'));
+          }
+
+          final scheduleData = snapshot.data ?? [];
+
+          if (scheduleData.isEmpty) {
+            return Center(child: Text('No schedule available'));
+          }
+
+          // Initialize selected indices for days
+          for (int i = 0; i < scheduleData.length; i++) {
+            selectedSubjectIndex.putIfAbsent(i, () => 0);
+          }
+
+          return _buildScheduleBody(scheduleData);
+        },
+      ),
+    );
+  }
+
+  Widget _buildScheduleBody(List<DailySubject> scheduleData) {
+    final selectedDay = scheduleData[selectedDayIndex];
+    final currentSelectedSubject = selectedSubjectIndex[selectedDayIndex] ?? 0;
+
+    return Container(
+      child: Padding(
+        padding: const EdgeInsets.all(15.0),
+        child: ListView(
+          children: [
+            SizedBox(
+              height: 100,
+              child: ListView.builder(
+                scrollDirection: Axis.horizontal,
+                itemCount: scheduleData.length,
+                itemBuilder: (context, index) {
+                  final day = scheduleData[index];
+                  final isSelected = index == selectedDayIndex;
+                  final dayName = day.dayName;
+                  final shortDay = dayName.length > 3
+                      ? dayName.substring(0, 3)
+                      : dayName;
+
+                  return GestureDetector(
+                    onTap: () => setState(() => selectedDayIndex = index),
+                    child: Container(
+                      width: 70,
+                      height: 70,
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            shortDay,
+                            style: flexableTextStyle(
+                              color: isSelected ? myGreen : Colors.black,
+                              size: 14,
+                              isBold: isSelected,
                             ),
-                            Text(
-                              day.dateInMonth,
-                              style: flexableTextStyle(
-                                color: isSelected ? myGreen : myGray,
-                                size: 12,
-                                isBold: isSelected,
-                              ),
+                          ),
+                          // Date removed since not in API
+                          if (isSelected)
+                            Container(
+                              margin: EdgeInsets.only(top: 8),
+                              height: 3,
+                              width: 30,
+                              color: myGreen,
                             ),
-                            if (isSelected)
-                              Container(
-                                margin: EdgeInsets.only(top: 8),
-                                height: 3,
-                                width: 30,
-                                color: myGreen,
-                              ),
-                          ],
-                        ),
+                        ],
                       ),
-                    );
-                  },
-                ),
+                    ),
+                  );
+                },
               ),
-              SizedBox(height: 15),
-              // Subjects list
-              ...selectedDay.subject.asMap().entries.map((entry) {
-                final index = entry.key;
-                final subject = entry.value;
+            ),
+            SizedBox(height: 15),
+            ...selectedDay.subjects.asMap().entries.map((entry) {
+              final index = entry.key;
+              final subject = entry.value;
 
-                return GestureDetector(
-                  onTap: () {
-                    setState(() {
-                      selectedSubjectIndex[selectedDayIndex] = index;
-                    });
-                  },
-                  child: index == currentSelectedSubject
-                      ? DailyScheduleWidget(subject: subject)
-                      : DailyScheduleWidgetNotSelected(subject: subject),
-                );
-              }).toList(),
-            ],
-          ),
+              return GestureDetector(
+                onTap: () => setState(() {
+                  selectedSubjectIndex[selectedDayIndex] = index;
+                }),
+                child: index == currentSelectedSubject
+                    ? DailyScheduleWidget(subject: subject)
+                    : DailyScheduleWidgetNotSelected(subject: subject),
+              );
+            }).toList(),
+          ],
         ),
       ),
     );

@@ -5,7 +5,7 @@ import 'package:school_application/shared/network/styles/styles.dart';
 
 import '../../Models/daily_schedule_model.dart';
 
-Widget DailyScheduleWidget({required subjectTime subject}) => Row(
+Widget DailyScheduleWidget({required SubjectTime subject}) => Row(
   crossAxisAlignment: CrossAxisAlignment.start,
   children: [
     SizedBox(width: 10),
@@ -86,7 +86,7 @@ Widget DailyScheduleWidget({required subjectTime subject}) => Row(
   ],
 );
 
-Widget DailyScheduleWidgetNotSelected({required subjectTime subject}) => Row(
+Widget DailyScheduleWidgetNotSelected({required SubjectTime subject}) => Row(
   crossAxisAlignment: CrossAxisAlignment.start,
   children: [
     SizedBox(width: 10),
