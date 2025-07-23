@@ -1,18 +1,22 @@
-class Student {
-  final String firstName;
-  final String lastName;
-  String studentNumber;
-  final String parentName;
-  String parentNumber;
-  String classroom;
+class User {
+  final int id;
+  final String name;
+  final String email;
+  final String phone;
 
-  Student({
-    required this.firstName,
-    required this.lastName,
-    required this.studentNumber,
-    required this.parentName,
-    required this.parentNumber,
-    required this.classroom,
+  User({
+    required this.id,
+    required this.name,
+    required this.email,
+    required this.phone,
   });
+
+  factory User.fromMap(Map<String, dynamic> map) {
+    return User(
+      id: map['id'] as int,
+      name: map['name'] as String,
+      email: map['email'] as String,
+      phone: map['phone'] as String,
+    );
+  }
 }
-final Student ghaith = Student(classroom: "b2",firstName: 'ghaith',lastName: "aljabban",parentName: 'khalid',studentNumber: '09xxxxxxx',parentNumber:'09xxxxxxx' );
