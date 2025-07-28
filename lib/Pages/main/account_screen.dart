@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:school_application/Models/user_model.dart';
 import 'package:school_application/Services/user_service.dart';
+import 'package:school_application/Pages/login/login_screen.dart';
 import 'package:school_application/shared/components/components.dart';
 import 'package:school_application/shared/network/styles/colors.dart';
 import 'package:school_application/shared/network/styles/styles.dart';
-import 'package:school_application/main.dart'; // Assuming your globals are here
+import 'package:school_application/main.dart';
+
+import '../../services/shared_preference_service.dart';
 
 class AccountScreen extends StatefulWidget {
   const AccountScreen({super.key});
@@ -14,10 +17,50 @@ class AccountScreen extends StatefulWidget {
 }
 
 class _AccountScreenState extends State<AccountScreen> {
+  Future<void> _logout() async {
+    // Show confirmation dialog
+    bool? shouldLogout = await showDialog<bool>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Logout'),
+          content: Text('Are you sure you want to logout?'),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(false),
+              child: Text('Cancel'),
+            ),
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(true),
+              child: Text('Logout'),
+            ),
+          ],
+        );
+      },
+    );
+
+    if (shouldLogout == true) {
+      // Clear user data from SharedPreferences
+      await SharedPrefsService.clearUserData();
+
+      // Navigate to login screen and remove all previous routes
+      Navigator.of(context).pushAndRemoveUntil(
+        MaterialPageRoute(builder: (context) => LoginScreen()),
+            (Route<dynamic> route) => false,
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(backgroundColor: myLime, toolbarHeight: 3),
+      floatingActionButton: FloatingActionButton(
+        onPressed: _logout,
+        backgroundColor: Colors.red,
+        child: Icon(Icons.logout, color: Colors.white),
+        tooltip: 'Logout',
+      ),
       body: FutureBuilder<User?>(
         future: UserService.getOne(studentID, token),
         builder: (context, snapshot) {
