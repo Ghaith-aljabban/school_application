@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:school_application/Pages/login/login_screen.dart';
 import 'package:school_application/Pages/welcome/welcome_screen.dart';
-import 'package:school_application/services/shared_preference_service.dart';
+import 'package:school_application/services/secure_storage_service.dart';
 import 'layout/main_menu.dart';
 
 late String token;
@@ -48,7 +48,7 @@ class _SplashScreenState extends State<SplashScreen> {
 
   Future<void> _checkAppState() async {
     // Check if this is the first time opening the app
-    bool isFirstTime = await SharedPrefsService.isFirstTime();
+    bool isFirstTime = await SecureStorageService.isFirstTime();
 
     if (isFirstTime) {
       // First time opening the app - go to welcome screen
@@ -57,12 +57,12 @@ class _SplashScreenState extends State<SplashScreen> {
       );
     } else {
       // Not first time - check if user is logged in
-      bool isLoggedIn = await SharedPrefsService.isLoggedIn();
+      bool isLoggedIn = await SecureStorageService.isLoggedIn();
 
       if (isLoggedIn) {
         // User is logged in - load global variables and go to main menu
-        final savedToken = await SharedPrefsService.getToken();
-        final savedStudentId = await SharedPrefsService.getStudentId();
+        final savedToken = await SecureStorageService.getToken();
+        final savedStudentId = await SecureStorageService.getStudentId();
 
         if (savedToken != null && savedStudentId != null) {
           token = savedToken;
@@ -92,6 +92,6 @@ class _SplashScreenState extends State<SplashScreen> {
 }
 
 String consUrl(String relativePath) {
-  const baseUrl = 'http://192.168.1.106:3000/api/';
+  const baseUrl = 'http://192.168.137.60:3000/api/';
   return baseUrl + relativePath;
 }

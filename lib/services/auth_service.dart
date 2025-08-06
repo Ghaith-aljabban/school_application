@@ -2,7 +2,7 @@ import 'dart:convert';
 
 import 'package:dio/dio.dart';
 import 'package:school_application/main.dart';
-import 'package:school_application/services/shared_preference_service.dart';
+import 'package:school_application/services/secure_storage_service.dart';
 import '../Models/auth_model.dart';
 import '../Models/user_model.dart';
 
@@ -19,7 +19,7 @@ class AuthService {
         studentID = response.data['user']["id"];
 
         // Save to SharedPreferences
-        await SharedPrefsService.saveUserData(
+        await SecureStorageService.saveUserData(
           token: response.data['token'],
           studentId: response.data['user']["id"],
         );

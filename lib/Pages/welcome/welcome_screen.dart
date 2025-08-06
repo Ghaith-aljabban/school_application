@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:school_application/Pages/welcome/welcome_screen2.dart';
 
-import '../../services/shared_preference_service.dart';
+import '../../services/secure_storage_service.dart';
 import '../../shared/components/components.dart';
 import '../../shared/network/styles/styles.dart';
 
@@ -39,7 +39,7 @@ class WelcomeScreen extends StatelessWidget {
             width: 351,
             function: () async {
               // Mark that it's no longer the first time
-              await SharedPrefsService.setNotFirstTime();
+              await SecureStorageService.setNotFirstTime();
 
               Navigator.of(context).pushAndRemoveUntil(
                 MaterialPageRoute(builder: (context) => const WelcomeScreen2()),
