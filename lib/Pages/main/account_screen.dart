@@ -7,7 +7,7 @@ import 'package:school_application/shared/network/styles/colors.dart';
 import 'package:school_application/shared/network/styles/styles.dart';
 import 'package:school_application/main.dart';
 
-import '../../services/shared_preference_service.dart';
+import '../../services/secure_storage_service.dart';
 
 class AccountScreen extends StatefulWidget {
   const AccountScreen({super.key});
@@ -41,7 +41,7 @@ class _AccountScreenState extends State<AccountScreen> {
 
     if (shouldLogout == true) {
       // Clear user data from SharedPreferences
-      await SharedPrefsService.clearUserData();
+      await SecureStorageService.clearUserData();
 
       // Navigate to login screen and remove all previous routes
       Navigator.of(context).pushAndRemoveUntil(
