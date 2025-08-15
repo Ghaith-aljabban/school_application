@@ -9,13 +9,27 @@ class UserService {
 
     try {
       final response = await dio.get(
-        consUrl('users/$id'),
+        consUrl('users/current-user'),
         options: Options(headers: {'Authorization': 'Bearer $token'}),
       );
 
       if (response.statusCode == 200) {
-        // Parse the response data into a User object
-        return User.fromMap(response.data);
+        // Parse the response data - the API returns a nested structure with "user" array
+        final responseData = response.data;
+
+        if (responseData is Map<String, dynamic> &&
+            responseData.containsKey('user') &&
+            responseData['user'] is List &&
+            (responseData['user'] as List).isNotEmpty) {
+
+          // Get the first user object from the array
+          final userData = (responseData['user'] as List)[0] as Map<String, dynamic>;
+
+          return User.fromMap(userData);
+        } else {
+          print('Invalid response format');
+          return null;
+        }
       } else {
         // Handle non-200 status codes
         print('Request failed with status: ${response.statusCode}');

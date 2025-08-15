@@ -2,7 +2,7 @@ import 'dart:convert';
 
 import 'package:dio/dio.dart';
 import 'package:school_application/main.dart';
-import 'package:school_application/services/secure_storage_service.dart';
+import 'package:school_application/storage/secure_storage_service.dart';
 import '../Models/auth_model.dart';
 import '../Models/user_model.dart';
 

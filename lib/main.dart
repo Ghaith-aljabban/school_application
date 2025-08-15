@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:school_application/Pages/login/login_screen.dart';
 import 'package:school_application/Pages/welcome/welcome_screen.dart';
-import 'package:school_application/services/secure_storage_service.dart';
+import 'package:school_application/storage/secure_storage_service.dart';
+import 'Models/subjects_model.dart';
 import 'layout/main_menu.dart';
 
 late String token;
 late int studentID;
+List<SubjectsModel> studentSubjects=[];
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -67,6 +69,7 @@ class _SplashScreenState extends State<SplashScreen> {
         if (savedToken != null && savedStudentId != null) {
           token = savedToken;
           studentID = savedStudentId;
+          studentSubjects = await SecureStorageService.getSubjects();
         }
 
         Navigator.of(context).pushReplacement(
@@ -92,6 +95,6 @@ class _SplashScreenState extends State<SplashScreen> {
 }
 
 String consUrl(String relativePath) {
-  const baseUrl = 'http://192.168.137.60:3000/api/';
+  const baseUrl = 'http://192.168.1.106:3000/api/';
   return baseUrl + relativePath;
 }

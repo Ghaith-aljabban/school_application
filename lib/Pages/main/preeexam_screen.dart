@@ -3,6 +3,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:school_application/Models/subjects_model.dart';
 import 'package:school_application/shared/components/components.dart';
 
+import '../../main.dart';
 import '../preeexam/subject_preeexam_years_screen.dart';
 import 'notification_screen.dart';
 
@@ -28,35 +29,39 @@ class PreeexamScreen extends StatelessWidget {
           SizedBox(width: 27),
         ],
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(20.0),
-        child: GridView.builder(
-          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 2,
-            crossAxisSpacing: 20.0,
-            mainAxisSpacing: 20.0,
-          ),
-          itemCount: mySubjects.length,
-          itemBuilder: (context, index) {
-            return GestureDetector(
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) =>
-                        SubjectPreeexamScreen(name: mySubjects[index].name),
+      body: ListView(
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(20.0),
+            child: GridView.builder(
+              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 2,
+                crossAxisSpacing: 20.0,
+                mainAxisSpacing: 20.0,
+              ),
+              itemCount: studentSubjects.length,
+              itemBuilder: (context, index) {
+                return GestureDetector(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) =>
+                            SubjectPreeexamScreen(name: studentSubjects[index].name),
+                      ),
+                    );
+                  },
+                  child: SubjectWidget(
+                    name: studentSubjects[index].name,
+                    icon: SubjectsModel.getIconForSubject(studentSubjects[index].name),
                   ),
                 );
               },
-              child: SubjectWidget(
-                name: mySubjects[index].name,
-                icon: mySubjects[index].icon,
-              ),
-            );
-          },
-          shrinkWrap: true,
-          physics: NeverScrollableScrollPhysics(),
-        ),
+              shrinkWrap: true,
+              physics: NeverScrollableScrollPhysics(),
+            ),
+          ),
+        ],
       ),
     );
   }

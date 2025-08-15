@@ -1,4 +1,7 @@
+import 'dart:convert';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+
+import '../Models/subjects_model.dart';
 
 class SecureStorageService {
   static const _storage = FlutterSecureStorage();
@@ -6,60 +9,77 @@ class SecureStorageService {
   static const String _tokenKey = 'user_token';
   static const String _studentIdKey = 'student_id';
   static const String _isFirstTimeKey = 'is_first_time';
+  static const String _keySubjects = 'subjects';
 
-  // Save token and student ID
-  static Future<void> saveUserData({required String token, required int studentId}) async {
+  static Future<void> saveUserData({
+    required String token,
+    required int studentId,
+  }) async {
     await _storage.write(key: _tokenKey, value: token);
     await _storage.write(key: _studentIdKey, value: studentId.toString());
   }
 
-  // Get token
   static Future<String?> getToken() async {
     return await _storage.read(key: _tokenKey);
   }
 
-  // Get student ID
   static Future<int?> getStudentId() async {
     final studentIdString = await _storage.read(key: _studentIdKey);
-    if (studentIdString == null) {
-      return null;
-    }
-    return int.tryParse(studentIdString);
+    return studentIdString != null ? int.tryParse(studentIdString) : null;
   }
 
-  // Check if user is logged in (has both token and student ID)
   static Future<bool> isLoggedIn() async {
     final token = await getToken();
     final studentId = await getStudentId();
     return token != null && studentId != null;
   }
 
-  // Check if this is the first time opening the app
   static Future<bool> isFirstTime() async {
     final isFirstTime = await _storage.read(key: _isFirstTimeKey);
-    return isFirstTime == null ? true : (isFirstTime.toLowerCase() == 'true');
+    return isFirstTime == null || isFirstTime.toLowerCase() == 'true';
   }
 
-  // Set first time flag to false
   static Future<void> setNotFirstTime() async {
     await _storage.write(key: _isFirstTimeKey, value: 'false');
   }
 
-  // Clear all user data (for logout)
   static Future<void> clearUserData() async {
-    await _storage.delete(key: _tokenKey);
-    await _storage.delete(key: _studentIdKey);
+    await Future.wait([
+      _storage.delete(key: _tokenKey),
+      _storage.delete(key: _studentIdKey),
+      _storage.delete(key: _keySubjects),
+    ]);
   }
 
-  // Initialize global variables from secure storage
+// secure_storage_service.dart
+  static Future<void> saveSubjects(List<SubjectsModel> subjects) async {
+    final subjectsJson = json.encode(subjects.map((subject) => {
+      'id': subject.id,
+      'name': subject.name,
+    }).toList());
+
+    await _storage.write(key: _keySubjects, value: subjectsJson);
+  }
+
+  static Future<List<SubjectsModel>> getSubjects() async {
+    final subjectsString = await _storage.read(key: _keySubjects);
+    if (subjectsString == null) return [];
+
+    try {
+      final List<dynamic> data = json.decode(subjectsString);
+      return data.map((item) => SubjectsModel.fromMap(item)).toList();
+    } catch (e) {
+      print('Error decoding subjects: $e');
+      return [];
+    }
+  }
+
   static Future<void> initializeGlobalVariables() async {
     final token = await getToken();
     final studentId = await getStudentId();
 
-    // Import your main.dart globals here and set them
-    // This will be called from main.dart
     if (token != null && studentId != null) {
-      // Set your global variables here
+      // Set your global variables here if needed
       // token = token;
       // studentID = studentId;
     }

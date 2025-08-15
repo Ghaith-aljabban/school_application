@@ -1,12 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:school_application/Models/user_model.dart';
 import 'package:school_application/layout/main_menu.dart';
+import 'package:school_application/main.dart';
 import 'package:school_application/services/auth_service.dart';
 import 'package:school_application/shared/components/constants.dart';
 import '../../Models/auth_model.dart';
+import '../../Models/subjects_model.dart';
+import '../../services/subject_service.dart';
 import '../../shared/components/components.dart';
 import '../../shared/network/styles/colors.dart';
 import '../../shared/network/styles/styles.dart';
+import '../../storage/secure_storage_service.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -45,8 +49,6 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
               ),
               const SizedBox(height: formSpacing),
-
-              // Student Name Field
               TextFormField(
                 controller: _studentNameController,
                 decoration: InputDecoration(
@@ -65,7 +67,6 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
               ),
               const SizedBox(height: 25.0),
-
               buildPasswordTFF(
                 obscurePassword: _obscurePassword,
                 onVisibilityPressed: () {
@@ -75,13 +76,11 @@ class _LoginScreenState extends State<LoginScreen> {
                 },
                 controller: _passwordController,
               ),
-
-              TextButton(
-                onPressed: () {},
-                child: Text('Forgot password?', style: hintTextStyle),
-              ),
+              // TextButton(
+              //   onPressed: () {},
+              //   child: Text('Forgot password?', style: hintTextStyle),
+              // ),
               const SizedBox(height: bottomSpacing),
-
 
               Center(
                 child: isLoading
@@ -89,32 +88,37 @@ class _LoginScreenState extends State<LoginScreen> {
                     : defaultButton(
                   width: double.infinity,
                   height: 50,
+                  // Inside the login button's function:
                   function: () async {
-                    print('trrt5de5dede54d5d54d54d54d45d45d54d5d54d54d5d445d54d54d');
-                    setState(() {
-                      isLoading = true;
-                    });
-                    bool? islogged = await AuthService.login(
-                        authModel: AuthModel(
-                            email: _studentNameController.text,
-                            password: _passwordController.text
-                        )
-                    );
-                    setState(() {
-                      isLoading = false;
-                    });
-                    if(islogged == true){
-                      Navigator.of(context).pushAndRemoveUntil(
-                        MaterialPageRoute(builder: (context) => const MainMenu()),
-                            (Route<dynamic> route) => false,
+                    setState(() => isLoading = true);
+                    try {
+                      bool? isLogged = await AuthService.login(
+                          authModel: AuthModel(
+                              email: _studentNameController.text,
+                              password: _passwordController.text
+                          )
                       );
-                    }
-                    else{
+
+                      if (isLogged == true) {
+                        // Fetch and store subjects
+                        List<SubjectsModel> subjects = await SubjectService.getSubjects();
+                        await SecureStorageService.saveSubjects(subjects);
+                        studentSubjects = subjects;
+                        Navigator.of(context).pushAndRemoveUntil(
+                          MaterialPageRoute(builder: (context) => const MainMenu()),
+                              (Route<dynamic> route) => false,
+                        );
+                      } else {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text('Check your credentials and try again')),
+                        );
+                      }
+                    } catch (e) {
                       ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content: Text('check your internet connection and try again'),
-                        ),
+                        SnackBar(content: Text('Error: ${e.toString()}')),
                       );
+                    } finally {
+                      setState(() => isLoading = false);
                     }
                   },
                   text: 'SUBMIT',

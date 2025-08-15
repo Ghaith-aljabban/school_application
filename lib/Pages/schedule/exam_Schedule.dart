@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:school_application/Models/exam_date_model.dart';
+import 'package:school_application/Models/subjects_model.dart';
 
 import '../../shared/network/styles/colors.dart';
 import '../../shared/network/styles/styles.dart';
@@ -54,7 +55,7 @@ class ExamSchedule extends StatelessWidget {
                       myExams[index - 1].timeStart +
                       " - " +
                       myExams[index - 1].timeEnd,
-                  icon: myExams[index - 1].subject.icon,
+                  icon: SubjectsModel.getIconForSubject(myExams[index - 1].subject.name),
                 ),
               ],
             );

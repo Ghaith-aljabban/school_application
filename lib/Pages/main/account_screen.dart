@@ -7,7 +7,7 @@ import 'package:school_application/shared/network/styles/colors.dart';
 import 'package:school_application/shared/network/styles/styles.dart';
 import 'package:school_application/main.dart';
 
-import '../../services/secure_storage_service.dart';
+import '../../storage/secure_storage_service.dart';
 
 class AccountScreen extends StatefulWidget {
   const AccountScreen({super.key});
@@ -40,10 +40,8 @@ class _AccountScreenState extends State<AccountScreen> {
     );
 
     if (shouldLogout == true) {
-      // Clear user data from SharedPreferences
       await SecureStorageService.clearUserData();
 
-      // Navigate to login screen and remove all previous routes
       Navigator.of(context).pushAndRemoveUntil(
         MaterialPageRoute(builder: (context) => LoginScreen()),
             (Route<dynamic> route) => false,
@@ -118,6 +116,10 @@ class _AccountScreenState extends State<AccountScreen> {
                 ),
               ),
               const SizedBox(height: 15),
+              dataField(fieldName: 'Student ID', data: user.studentId.toString()),
+              const SizedBox(height: 15),
+              Center(child: Container(width: 300, height: 1.3, color: myGray)),
+              const SizedBox(height: 15),
               dataField(fieldName: 'Email', data: user.email),
               const SizedBox(height: 15),
               Center(child: Container(width: 300, height: 1.3, color: myGray)),
@@ -126,7 +128,11 @@ class _AccountScreenState extends State<AccountScreen> {
               const SizedBox(height: 15),
               Center(child: Container(width: 300, height: 1.3, color: myGray)),
               const SizedBox(height: 15),
-              dataField(fieldName: 'User ID', data: user.id.toString()),
+              dataField(fieldName: 'Class', data: user.className),
+              const SizedBox(height: 15),
+              Center(child: Container(width: 300, height: 1.3, color: myGray)),
+              const SizedBox(height: 15),
+              dataField(fieldName: 'Grade Level', data: user.gradeLevel),
               const SizedBox(height: 15),
               Center(child: Container(width: 300, height: 1.3, color: myGray)),
             ],
