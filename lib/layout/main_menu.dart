@@ -3,13 +3,14 @@ import 'package:flutter/services.dart';
 import 'package:school_application/Pages/main/account_screen.dart';
 import 'package:school_application/Pages/main/home_Screen.dart';
 import 'package:school_application/Pages/main/preeexam_screen.dart';
+import 'package:school_application/Pages/main/preequiz_screen.dart';
 import 'package:school_application/shared/network/styles/colors.dart';
 
 int _selectedIndex = 0;
 List<Widget> Screens = [
   HomeScreen(),
   PreeexamScreen(),
-  HomeScreen(),
+  PreequizScreen(),
   AccountScreen(),
 ];
 

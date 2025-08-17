@@ -4,17 +4,18 @@ import 'package:school_application/Pages/preeexam/preform_preeexam_screen.dart';
 import '../../Models/preeexam_question_model.dart';
 import '../../Models/previous_exams_model.dart';
 import '../../services/preexam_service.dart'; // Add this import
+import '../../services/prequiz_service.dart';
 import '../../shared/components/components.dart';
 import '../../shared/network/styles/colors.dart';
 import '../../shared/network/styles/styles.dart';
 
-class ExamListScreen extends StatefulWidget {
+class QuizListScreen extends StatefulWidget {
   final String subject;
   final int subjectId; // Added subjectId
   final int semesterId;
   final String semesterName;
 
-  const ExamListScreen({
+  const QuizListScreen({
     super.key,
     required this.subject,
     required this.subjectId,
@@ -23,10 +24,10 @@ class ExamListScreen extends StatefulWidget {
   });
 
   @override
-  State<ExamListScreen> createState() => _ExamListScreenState();
+  State<QuizListScreen> createState() => _QuizListScreenState();
 }
 
-class _ExamListScreenState extends State<ExamListScreen> {
+class _QuizListScreenState extends State<QuizListScreen> {
   List<Preexam> exams = []; // Updated type
   bool isLoading = true;
   String? errorMessage;
@@ -39,7 +40,7 @@ class _ExamListScreenState extends State<ExamListScreen> {
 
   Future<void> _loadExams() async {
     try {
-      final fetchedExams = await PreexamService.getStudentPreexams(
+      final fetchedExams = await PrequizService.getStudentPreexams(
         subjectId: widget.subjectId,
         semesterId: widget.semesterId,
       );
