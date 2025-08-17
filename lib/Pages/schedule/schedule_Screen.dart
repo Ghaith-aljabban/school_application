@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:school_application/Pages/schedule/daily_Schedule.dart';
 import 'package:school_application/Pages/schedule/exam_Schedule.dart';
+import 'package:school_application/Pages/schedule/quiz_Schedule.dart';
 
 import '../../shared/components/components.dart';
 import '../../shared/network/styles/colors.dart';
@@ -49,7 +50,14 @@ class ScheduleScreen extends StatelessWidget {
               },
             ),
             Container(width: double.infinity, height: 1.0, color: myLightGray),
-            itemOfList(data: 'Quiz Schedule'),
+            GestureDetector(
+              child: itemOfList(data: 'Quiz Schedule'),
+              onTap: () {
+                Navigator.of(
+                  context,
+                ).push(MaterialPageRoute(builder: (context) => QuizSchedule()));
+              },
+            ),
           ],
         ),
       ),
