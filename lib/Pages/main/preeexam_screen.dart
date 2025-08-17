@@ -4,7 +4,7 @@ import 'package:school_application/Models/subjects_model.dart';
 import 'package:school_application/shared/components/components.dart';
 
 import '../../main.dart';
-import '../preeexam/subject_preeexam_years_screen.dart';
+import '../preeexam/subject_semesters_screen.dart';
 import 'notification_screen.dart';
 
 class PreeexamScreen extends StatelessWidget {
@@ -47,7 +47,7 @@ class PreeexamScreen extends StatelessWidget {
                       context,
                       MaterialPageRoute(
                         builder: (context) =>
-                            SubjectPreeexamScreen(name: studentSubjects[index].name),
+                            SubjectSemestersScreen(name: studentSubjects[index].name, subjectId: studentSubjects[index].id,),
                       ),
                     );
                   },
