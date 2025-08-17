@@ -1,45 +1,40 @@
-// ======== previous_exams_model.dart ========
-import 'package:school_application/Models/preeexam_question_model.dart';
+class Preexam {
+  final int id;
+  final int subjectId;
+  final String title;
+  final String description;
+  final int timeLimit;
+  final int totalMark;
+  final int passingMark;
+  final DateTime startDatetime;
+  final DateTime endDatetime;
+  final int semesterId;
 
-class PreviousExamsByYear {
-  final String date;
-  List<Exam> exams;
-  PreviousExamsByYear({required this.date, required this.exams});
-}
-
-class Exam {
-  final String id;
-  final String name;
-  final String year;
-  final List<ExamQuestion> questions;
-
-  Exam({
+  Preexam({
     required this.id,
-    required this.name,
-    required this.year,
-    required this.questions,
+    required this.subjectId,
+    required this.title,
+    required this.description,
+    required this.timeLimit,
+    required this.totalMark,
+    required this.passingMark,
+    required this.startDatetime,
+    required this.endDatetime,
+    required this.semesterId,
   });
+
+  factory Preexam.fromMap(Map<String, dynamic> map) {
+    return Preexam(
+      id: map['id'] ?? 0,
+      subjectId: map['subject_id'] ?? 0,
+      title: map['title'] ?? '',
+      description: map['description'] ?? '',
+      timeLimit: map['time_limit'] ?? 0,
+      totalMark: map['total_mark'] ?? 0,
+      passingMark: map['passing_mark'] ?? 0,
+      startDatetime: DateTime.parse(map['start_datetime']),
+      endDatetime: DateTime.parse(map['end_datetime']),
+      semesterId: map['semester_id'] ?? 0,
+    );
+  }
 }
-
-// Mock data for exams
-final List<Exam> allExams = [
-  Exam(
-    id: "math-2024-1",
-    name: "Mathematics Final Exam",
-    year: "2024",
-    questions: mockQuestions,
-  ),
-  Exam(
-    id: "math-2024-2",
-    name: "Mathematics Midterm",
-    year: "2024",
-    questions: mockQuestions,
-  ),
-];
-
-List<PreviousExamsByYear> subjectPreviousExams = [
-  PreviousExamsByYear(date: "2024", exams: allExams),
-  PreviousExamsByYear(date: "2023", exams: allExams),
-  PreviousExamsByYear(date: "2022", exams: allExams),
-  PreviousExamsByYear(date: "2021", exams: allExams),
-];
