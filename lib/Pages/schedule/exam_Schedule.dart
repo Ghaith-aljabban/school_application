@@ -1,12 +1,36 @@
 import 'package:flutter/material.dart';
 import 'package:school_application/Models/exam_date_model.dart';
-import 'package:school_application/Models/subjects_model.dart';
-
+import 'package:school_application/services/exam_service.dart';
 import '../../shared/network/styles/colors.dart';
 import '../../shared/network/styles/styles.dart';
 
-class ExamSchedule extends StatelessWidget {
+class ExamSchedule extends StatefulWidget {
   const ExamSchedule({super.key});
+
+  @override
+  State<ExamSchedule> createState() => _ExamScheduleState();
+}
+
+class _ExamScheduleState extends State<ExamSchedule> {
+  late Future<List<ExamDateModel>> futureExams;
+  final ExamService _examService = ExamService();
+
+  @override
+  void initState() {
+    super.initState();
+    futureExams = _examService.getNextExams();
+  }
+
+  // Simple icon mapping based on subject name
+  IconData _getSubjectIcon(String subjectName) {
+    final lowerName = subjectName.toLowerCase();
+    if (lowerName.contains('math')) return Icons.calculate;
+    if (lowerName.contains('science')) return Icons.science;
+    if (lowerName.contains('english')) return Icons.menu_book;
+    if (lowerName.contains('history')) return Icons.history_edu;
+    if (lowerName.contains('art')) return Icons.color_lens;
+    return Icons.book; // Default icon
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -14,58 +38,67 @@ class ExamSchedule extends StatelessWidget {
       appBar: AppBar(
         leadingWidth: double.infinity,
         leading: GestureDetector(
+          onTap: () => Navigator.pop(context),
           child: Row(
             children: [
-              SizedBox(width: 20),
+              const SizedBox(width: 20),
               Icon(Icons.arrow_back_ios_new, color: myGreen, size: 35),
               Text("Exams Schedule", style: greenHTextStyle),
             ],
-          ), // ← Your custom icon
-          onTap: () {
-            Navigator.of(context).pop();
-          },
+          ),
         ),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(18.0),
-        child: ListView.builder(
-          itemCount: myExams.length + 1,
-          itemBuilder: (context, index) {
-            if (index == 0) {
-              // First item: display the name
-              return Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Text(
-                  "Upcoming Exams",
-                  style: flexableTextStyle(
-                    size: 30,
-                    color: Colors.black,
-                    isBold: true,
-                  ),
-                ),
-              );
-            }
-            return Column(
-              children: [
-                ExamDateCard(
-                  title: myExams[index - 1].subject.name,
-                  description:
-                      myExams[index - 1].date +
-                      " " +
-                      myExams[index - 1].timeStart +
-                      " - " +
-                      myExams[index - 1].timeEnd,
-                  icon: SubjectsModel.getIconForSubject(myExams[index - 1].subject.name),
-                ),
-              ],
-            );
-          },
-        ),
+      body: FutureBuilder<List<ExamDateModel>>(
+        future: futureExams,
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          }
+
+          if (snapshot.hasError) {
+            return Center(child: Text('Error: ${snapshot.error}'));
+          }
+
+          final exams = snapshot.data ?? [];
+
+          if (exams.isEmpty) {
+            return const Center(child: Text('No upcoming exams'));
+          }
+
+          return Padding(
+            padding: EdgeInsets.all(18.0),
+            child: ListView.builder(
+              itemCount: exams.length + 1,
+              itemBuilder: (context, index) {
+                if (index == 0) {
+                  return Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Text(
+                      "Upcoming Exams",
+                      style: flexableTextStyle(
+                        size: 30,
+                        color: Colors.black,
+                        isBold: true,
+                      ),
+                    ),
+                  );
+                }
+                final exam = exams[index - 1 ];
+                return ExamDateCard(
+                  title: exam.subjectName,
+                  description: "${exam.date} ${exam.timeStart} - ${exam.timeEnd}",
+                  icon: _getSubjectIcon(exam.subjectName),
+                );
+              },
+            ),
+          );
+        },
       ),
     );
   }
 }
 
+// ExamDateCard remains the same
 Widget ExamDateCard({
   required String title,
   required String description,

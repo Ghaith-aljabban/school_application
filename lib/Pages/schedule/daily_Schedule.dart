@@ -15,10 +15,12 @@ class DailySchedule extends StatefulWidget {
 class _DailyScheduleState extends State<DailySchedule> {
   int selectedDayIndex = 0;
   Map<int, int> selectedSubjectIndex = {};
+  late Future<List<DailySubject>> _scheduleFuture;
 
   @override
   void initState() {
     super.initState();
+    _scheduleFuture = ScheduleService.fetchSchedule();
     selectedSubjectIndex = {};
   }
 
@@ -39,7 +41,7 @@ class _DailyScheduleState extends State<DailySchedule> {
         ),
       ),
       body: FutureBuilder<List<DailySubject>>(
-        future: ScheduleService.fetchSchedule(),
+        future: _scheduleFuture,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return Center(child: CircularProgressIndicator(color: myGreen));
@@ -55,9 +57,11 @@ class _DailyScheduleState extends State<DailySchedule> {
             return Center(child: Text('No schedule available'));
           }
 
-          // Initialize selected indices for days
-          for (int i = 0; i < scheduleData.length; i++) {
-            selectedSubjectIndex.putIfAbsent(i, () => 0);
+          // Initialize selected indices for days only once
+          if (selectedSubjectIndex.isEmpty) {
+            for (int i = 0; i < scheduleData.length; i++) {
+              selectedSubjectIndex[i] = 0;
+            }
           }
 
           return _buildScheduleBody(scheduleData);
@@ -104,7 +108,6 @@ class _DailyScheduleState extends State<DailySchedule> {
                               isBold: isSelected,
                             ),
                           ),
-                          // Date removed since not in API
                           if (isSelected)
                             Container(
                               margin: EdgeInsets.only(top: 8),

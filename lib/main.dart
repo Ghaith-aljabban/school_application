@@ -95,6 +95,6 @@ class _SplashScreenState extends State<SplashScreen> {
 }
 
 String consUrl(String relativePath) {
-  const baseUrl = 'http://192.168.1.106:3000/api/';
+  const baseUrl = 'http://192.168.137.185:3000/api/';
   return baseUrl + relativePath;
 }

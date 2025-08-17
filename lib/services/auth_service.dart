@@ -13,6 +13,8 @@ class AuthService {
       Response response = await dio.post(consUrl('users/signin'),
         data: authModel.toMap(),
       );
+      print(response.data  );
+      print(response.statusCode);
       if (response.statusCode == 200) {
         // Set global variables
         token = response.data['token'];
