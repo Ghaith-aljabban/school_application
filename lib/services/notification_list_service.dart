@@ -3,7 +3,7 @@ import 'package:dio/dio.dart';
 import 'package:school_application/main.dart';
 import 'package:school_application/Models/notification_model.dart';
 
-class NotificationService {
+class NotificationListService {
   final Dio _dio = Dio();
 
   Future<List<Notification>> getNotifications() async {

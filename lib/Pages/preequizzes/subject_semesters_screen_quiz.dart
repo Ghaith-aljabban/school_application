@@ -1,10 +1,11 @@
+// subject_semesters_screen_quiz.dart
 import 'package:flutter/material.dart';
 import 'package:school_application/Models/semester_model.dart';
 import 'package:school_application/Pages/preeexam/subject_preeexam_avalibe_screen.dart';
 import 'package:school_application/Pages/preequizzes/subject_preequizzes_avalibe_screen.dart';
 
 import '../../services/preequizzes_semesters_service.dart';
-import '../../services/preexam_service.dart'; // Add this import
+import '../../services/preexam_service.dart';
 import '../../services/preeexams_semesters_service.dart';
 import '../../shared/components/components.dart';
 import '../../shared/network/styles/colors.dart';
@@ -25,28 +26,11 @@ class SubjectSemestersScreenQuiz extends StatefulWidget {
 }
 
 class _SubjectSemestersScreenQuizState extends State<SubjectSemestersScreenQuiz> {
-  List<Semester> semesters = [];
-  bool isLoading = true;
-  String? errorMessage;
-
-  @override
-  void initState() {
-    super.initState();
-    _loadSemesters();
-  }
-
-  Future<void> _loadSemesters() async {
+  Future<List<Semester>> _getSemestersFuture() async {
     try {
-      final fetchedSemesters = await PreequizzesSemestersService.getSemestersBySubject(widget.subjectId);
-      setState(() {
-        semesters = fetchedSemesters;
-        isLoading = false;
-      });
+      return await PreequizzesSemestersService.getSemestersBySubject(widget.subjectId);
     } catch (e) {
-      setState(() {
-        errorMessage = e.toString();
-        isLoading = false;
-      });
+      throw e.toString();
     }
   }
 
@@ -66,15 +50,24 @@ class _SubjectSemestersScreenQuizState extends State<SubjectSemestersScreenQuiz>
           onTap: () => Navigator.pop(context),
         ),
       ),
-      body: isLoading
-          ? const Center(child: CircularProgressIndicator())
-          : errorMessage != null
-          ? Center(child: Text(errorMessage!))
-          : _buildSemesterList(),
+      body: FutureBuilder<List<Semester>>(
+        future: _getSemestersFuture(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          } else if (snapshot.hasError) {
+            return Center(child: Text(snapshot.error.toString()));
+          } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+            return const Center(child: Text('No semesters found'));
+          } else {
+            return _buildSemesterList(snapshot.data!);
+          }
+        },
+      ),
     );
   }
 
-  Widget _buildSemesterList() {
+  Widget _buildSemesterList(List<Semester> semesters) {
     return ListView.builder(
       itemCount: semesters.length * 2,
       itemBuilder: (context, index) {
@@ -95,7 +88,7 @@ class _SubjectSemestersScreenQuizState extends State<SubjectSemestersScreenQuiz>
                 MaterialPageRoute(
                   builder: (context) => QuizListScreen(
                     subject: widget.name,
-                    subjectId: widget.subjectId, // Pass subjectId
+                    subjectId: widget.subjectId,
                     semesterId: semesters[dataIndex].semesterId,
                     semesterName: semesters[dataIndex].semesterName,
                   ),
