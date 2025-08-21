@@ -6,6 +6,7 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:http/http.dart' as http;
 import 'package:school_application/Pages/login/login_screen.dart';
 import 'package:school_application/Pages/welcome/welcome_screen.dart';
+import 'package:school_application/services/notification_service.dart';
 import 'package:school_application/storage/secure_storage_service.dart';
 import 'Models/subjects_model.dart';
 import 'layout/main_menu.dart';
@@ -48,61 +49,20 @@ class SplashScreen extends StatefulWidget {
 }
 
 class _SplashScreenState extends State<SplashScreen> {
-  final FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
+  final NotificationService _notificationService = NotificationService();
 
   @override
   void initState() {
     super.initState();
+    _initializeApp();
+  }
+
+  Future<void> _initializeApp() async {
+    // Initialize notification service
+    // await _notificationService.initialize();
+
+    // Check app state and navigate
     _checkAppState();
-    _setupFCM();
-  }
-
-  Future<void> _setupFCM() async {
-    // Request permissions (iOS/macOS)
-    await _firebaseMessaging.requestPermission(
-      alert: true,
-      badge: true,
-      sound: true,
-    );
-
-    // Get FCM token
-    String? fcmToken = await _firebaseMessaging.getToken();
-    if (fcmToken != null) {
-      print("FCM Token: $fcmToken");
-      await _registerFCMToken(fcmToken); // Send to backend
-    }
-
-    // Listen for token refresh
-    _firebaseMessaging.onTokenRefresh.listen((newToken) async {
-      print("New FCM Token: $newToken");
-      await _registerFCMToken(newToken);
-    });
-  }
-
-  Future<void> _registerFCMToken(String token) async {
-    final authToken = await SecureStorageService.getToken(); // Your existing method
-    String url = consUrl('fcm/register');
-    try {
-      final response = await http.post(
-        Uri.parse(url),
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer $authToken', // Add auth token
-        },
-        body: jsonEncode({
-          'token': token,
-          'device_type': 'mobile', // Adjust as needed
-        }),
-      );
-
-      if (response.statusCode == 200) {
-        print("FCM token registered successfully");
-      } else {
-        print("Failed to register FCM token: ${response.body}");
-      }
-    } catch (e) {
-      print("Error registering FCM token: $e");
-    }
   }
 
   Future<void> _checkAppState() async {
@@ -141,6 +101,6 @@ class _SplashScreenState extends State<SplashScreen> {
 }
 
 String consUrl(String relativePath) {
-  const baseUrl = 'http://10.176.193.103:3000/api/';
+  const baseUrl = 'http://192.168.137.45:3000/api/';
   return baseUrl + relativePath;
 }
