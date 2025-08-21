@@ -1,153 +1,98 @@
-// notification_service.dart
+// lib/notification_service.dart
 import 'dart:convert';
+import 'dart:developer';
 
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
 class NotificationService {
-  static final NotificationService _instance = NotificationService._internal();
-  factory NotificationService() => _instance;
-  NotificationService._internal();
-
-  final FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
-  final FlutterLocalNotificationsPlugin _localNotifications =
+  NotificationService._();
+  static final FlutterLocalNotificationsPlugin _plugin =
   FlutterLocalNotificationsPlugin();
 
-  // Initialize notification services
-  Future<void> initialize() async {
-    await _setupLocalNotifications();
-    await _setupFCM();
-  }
+  static const AndroidNotificationChannel _channel = AndroidNotificationChannel(
+    'high_importance_channel',
+    'High Importance Notifications',
+    description: 'Used for important notifications.',
+    importance: Importance.high,
+  );
 
-  // Set up local notifications
-  Future<void> _setupLocalNotifications() async {
-    const AndroidInitializationSettings androidSettings =
-    AndroidInitializationSettings('@mipmap/ic_launcher');
+  static bool _initialized = false;
 
-    const DarwinInitializationSettings iosSettings =
-    DarwinInitializationSettings(
-      requestAlertPermission: true,
-      requestBadgePermission: true,
-      requestSoundPermission: true,
+  /// Call once at app startup (main) and also from the background handler.
+  static Future<void> ensureInitialized() async {
+    if (_initialized) return;
+
+    // Android init (use a valid monochrome small icon from your project)
+    const androidInit = AndroidInitializationSettings('@mipmap/ic_launcher');
+
+    // iOS init
+    const darwinInit = DarwinInitializationSettings(
+      requestAlertPermission: false,
+      requestBadgePermission: false,
+      requestSoundPermission: false,
     );
 
-    const InitializationSettings initializationSettings =
-    InitializationSettings(
-      android: androidSettings,
-      iOS: iosSettings,
+    await _plugin.initialize(
+      const InitializationSettings(android: androidInit, iOS: darwinInit),
+      onDidReceiveNotificationResponse: (NotificationResponse response) {
+        final payload = response.payload;
+        if (payload != null) {
+          try {
+            final data = jsonDecode(payload) as Map<String, dynamic>;
+            _onNotificationTap(data);
+          } catch (e) {
+            log('onSelect parse error: $e');
+          }
+        }
+      },
     );
 
-    await _localNotifications.initialize(
-      initializationSettings,
-      onDidReceiveNotificationResponse: _onNotificationTap,
-    );
+    // Create Android channel
+    await _plugin
+        .resolvePlatformSpecificImplementation<
+        AndroidFlutterLocalNotificationsPlugin>()
+        ?.createNotificationChannel(_channel);
+
+    _initialized = true;
   }
 
-  // Set up Firebase Cloud Messaging
-  Future<void> _setupFCM() async {
-    // Request permissions
-    await _firebaseMessaging.requestPermission(
-      alert: true,
-      badge: true,
-      sound: true,
-    );
+  /// Convert a RemoteMessage into a local notification that will *always* show,
+  /// even when the app is in foreground (which FCM does not do automatically).
+  static Future<void> showFromRemoteMessage(RemoteMessage m) async {
+    final title = m.notification?.title ?? m.data['title'];
+    final body = m.notification?.body ?? m.data['body'];
 
-    // Get FCM token
-    String? fcmToken = await _firebaseMessaging.getToken();
-    if (fcmToken != null) {
-      print("FCM Token: $fcmToken");
-      await _registerFCMToken(fcmToken);
-    }
+    // Pack all data so tapping the notification can route inside the app
+    final payload = jsonEncode(m.data);
 
-    // Listen for token refresh
-    _firebaseMessaging.onTokenRefresh.listen((newToken) async {
-      print("New FCM Token: $newToken");
-      await _registerFCMToken(newToken);
-    });
-
-    // Handle foreground messages
-    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-      _handleForegroundMessage(message);
-    });
-
-    // Handle background/terminated messages
-    FirebaseMessaging.onMessageOpenedApp.listen(_handleBackgroundMessage);
-    FirebaseMessaging.instance.getInitialMessage().then((RemoteMessage? message) {
-      if (message != null) {
-        _handleBackgroundMessage(message);
-      }
-    });
-  }
-
-  // Register FCM token with backend
-  Future<void> _registerFCMToken(String token) async {
-    // Your implementation from _registerFCMToken
-    // This should be moved to an API service class ideally
-  }
-
-  // Handle foreground messages
-  void _handleForegroundMessage(RemoteMessage message) {
-    // Show local notification
-    _showLocalNotification(message);
-
-    // You can also add other logic like updating UI, etc.
-  }
-
-  // Handle background/terminated messages
-  void _handleBackgroundMessage(RemoteMessage message) {
-    // Handle notification tap when app is in background/terminated
-    _onNotificationTap(NotificationResponse(
-      notificationResponseType: NotificationResponseType.selectedNotification,
-      payload: jsonEncode(message.data),
-    ));
-  }
-
-  // Show local notification
-  Future<void> _showLocalNotification(RemoteMessage message) async {
-    const AndroidNotificationDetails androidDetails = AndroidNotificationDetails(
-      'high_importance_channel',
-      'High Importance Notifications',
-      channelDescription: 'This channel is used for important notifications',
-      importance: Importance.max,
-      priority: Priority.high,
+    final details = const NotificationDetails(
+      android: AndroidNotificationDetails(
+        _channelId,
+        _channelName,
+        channelDescription: _channelDescription,
+        importance: Importance.high,
+        priority: Priority.high,
+        icon: '@mipmap/ic_launcher',
+      ),
+      iOS: DarwinNotificationDetails(),
     );
 
-    const DarwinNotificationDetails iosDetails = DarwinNotificationDetails();
+    // Use a stable-ish id so duplicates are less likely; fallback to hashCode
+    final id = m.messageId?.hashCode ?? m.data.hashCode;
 
-    const NotificationDetails details = NotificationDetails(
-      android: androidDetails,
-      iOS: iosDetails,
-    );
-
-    await _localNotifications.show(
-      DateTime.now().millisecondsSinceEpoch ~/ 1000, // Unique ID
-      message.notification?.title,
-      message.notification?.body,
-      details,
-      payload: jsonEncode(message.data),
-    );
+    await _plugin.show(id, title, body, details, payload: payload);
   }
 
-  // Handle notification tap
-  void _onNotificationTap(NotificationResponse response) {
-    if (response.payload != null) {
-      final data = jsonDecode(response.payload!);
-      // Navigate based on notification data
-      _navigateBasedOnNotification(data);
-    }
-  }
+  static const String _channelId = 'high_importance_channel';
+  static const String _channelName = 'High Importance Notifications';
+  static const String _channelDescription = 'Used for important notifications.';
 
-  // Navigate based on notification data
-  void _navigateBasedOnNotification(Map<String, dynamic> data) {
-    // Implement your navigation logic here
-    // This could use a Navigator key or event system to communicate with UI
-    print('Notification data: $data');
-
-    // Example:
-    // if (data['type'] == 'message') {
-    //   Navigator.of(navigatorKey.currentContext!).push(
-    //     MaterialPageRoute(builder: (context) => MessageScreen(data['id'])),
-    //   );
-    // }
+  /// Handle navigation/routing after the user taps a local notification.
+  /// Adjust this to your app’s routing scheme.
+  static void _onNotificationTap(Map<String, dynamic> data) {
+    // For now we only log. You can route using a global navigatorKey
+    // from main.dart if you want to push a screen here.
+    log('Tapped notification with data: $data');
   }
 }

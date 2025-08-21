@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:school_application/Models/exam_date_model.dart';
+import 'package:school_application/Models/subjects_model.dart';
 import 'package:school_application/services/exam_service.dart';
 import '../../Models/quiz_date_model.dart';
 import '../../services/quiz_service.dart';
@@ -21,17 +22,6 @@ class _QuizScheduleState extends State<QuizSchedule> {
   void initState() {
     super.initState();
     futureExams = _quizService.getNextQuizes();
-  }
-
-  // Simple icon mapping based on subject name
-  IconData _getSubjectIcon(String subjectName) {
-    final lowerName = subjectName.toLowerCase();
-    if (lowerName.contains('math')) return Icons.calculate;
-    if (lowerName.contains('science')) return Icons.science;
-    if (lowerName.contains('english')) return Icons.menu_book;
-    if (lowerName.contains('history')) return Icons.history_edu;
-    if (lowerName.contains('art')) return Icons.color_lens;
-    return Icons.book; // Default icon
   }
 
   @override
@@ -89,7 +79,7 @@ class _QuizScheduleState extends State<QuizSchedule> {
                 return ExamDateCard(
                   title: exam.subjectName,
                   description: "${exam.date} ${exam.timeStart} - ${exam.timeEnd}",
-                  icon: _getSubjectIcon(exam.subjectName),
+                  icon: SubjectsModel.getIconForSubject(exam.subjectName),
                 );
               },
             ),

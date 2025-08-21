@@ -40,6 +40,12 @@ class _AccountScreenState extends State<AccountScreen> {
     );
 
     if (shouldLogout == true) {
+      // Clear global variables
+      token = '';
+      studentID = 0;
+      studentSubjects = [];
+      
+      // Clear stored data
       await SecureStorageService.clearUserData();
 
       Navigator.of(context).pushAndRemoveUntil(

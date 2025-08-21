@@ -15,7 +15,7 @@ class NotificationScreen extends StatefulWidget {
 }
 
 class _NotificationScreenState extends State<NotificationScreen> {
-  final NotificationService _notificationService = NotificationService();
+  final NotificationListService _notificationService = NotificationListService();
   late Future<List<Notification>> _notificationsFuture;
 
   @override
