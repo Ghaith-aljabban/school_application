@@ -44,7 +44,7 @@ class _QuizScheduleState extends State<QuizSchedule> {
         future: futureExams,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
+            return Center(child: CircularProgressIndicator(color:myGreen));
           }
 
           if (snapshot.hasError) {

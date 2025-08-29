@@ -22,8 +22,31 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   bool isLoading = false;
   bool _obscurePassword = true;
-  final TextEditingController _studentNameController = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+  final _formKey = GlobalKey<FormState>();
+
+  // Validation methods
+  String? _validateEmail(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'Email is required';
+    }
+    final emailRegex = RegExp(r'^[^@]+@[^@]+\.[^@]+$');
+    if (!emailRegex.hasMatch(value)) {
+      return 'Please enter a valid email address';
+    }
+    return null;
+  }
+
+  String? _validatePassword(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'Password is required';
+    }
+    if (value.length < 8) {
+      return 'Password must be at least 8 characters long';
+    }
+    return null;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -49,33 +72,43 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
               ),
               const SizedBox(height: formSpacing),
-              TextFormField(
-                controller: _studentNameController,
-                decoration: InputDecoration(
-                  filled: true,
-                  fillColor: myLime,
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10.0),
-                    borderSide: BorderSide.none,
-                  ),
-                  contentPadding: const EdgeInsets.symmetric(
-                    horizontal: 20.0,
-                    vertical: 15.0,
-                  ),
-                  hintText: 'Student name',
-                  hintStyle: hintTextStyle,
+              Form(
+                key: _formKey,
+                child: Column(
+                  children: [
+                    TextFormField(
+                      controller: _emailController,
+                      validator: _validateEmail,
+                      decoration: InputDecoration(
+                        filled: true,
+                        fillColor: myLime,
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10.0),
+                          borderSide: BorderSide.none,
+                        ),
+                        contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 20.0,
+                          vertical: 15.0,
+                        ),
+                        hintText: 'Email address',
+                        hintStyle: hintTextStyle,
+                      ),
+                    ),
+                    const SizedBox(height: 25.0),
+                    buildPasswordTFF(
+                      obscurePassword: _obscurePassword,
+                      onVisibilityPressed: () {
+                        setState(() {
+                          _obscurePassword = !_obscurePassword;
+                        });
+                      },
+                      controller: _passwordController,
+                      validator: _validatePassword,
+                    ),
+                  ],
                 ),
               ),
               const SizedBox(height: 25.0),
-              buildPasswordTFF(
-                obscurePassword: _obscurePassword,
-                onVisibilityPressed: () {
-                  setState(() {
-                    _obscurePassword = !_obscurePassword;
-                  });
-                },
-                controller: _passwordController,
-              ),
               // TextButton(
               //   onPressed: () {},
               //   child: Text('Forgot password?', style: hintTextStyle),
@@ -92,25 +125,40 @@ class _LoginScreenState extends State<LoginScreen> {
                   function: () async {
                     setState(() => isLoading = true);
                     try {
-                      bool? isLogged = await AuthService.login(
-                          authModel: AuthModel(
-                              email: _studentNameController.text,
-                              password: _passwordController.text
-                          )
+                      // Validate form first
+                      if (!_formKey.currentState!.validate()) {
+                        setState(() => isLoading = false);
+                        return;
+                      }
+
+                      final loginResult = await AuthService.login(
+                        authModel: AuthModel(
+                          email: _emailController.text.trim(),
+                          password: _passwordController.text,
+                        ),
                       );
 
-                      if (isLogged == true) {
+                      if (loginResult['success'] == true) {
+                        // Check if user type is student
+                        if (loginResult['role'] != 'student') {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(content: Text('Access denied. Only students can login.')),
+                          );
+                          setState(() => isLoading = false);
+                          return;
+                        }
+
                         // Fetch and store subjects
                         List<SubjectsModel> subjects = await SubjectService.getSubjects();
                         await SecureStorageService.saveSubjects(subjects);
                         studentSubjects = subjects;
                         Navigator.of(context).pushAndRemoveUntil(
                           MaterialPageRoute(builder: (context) => const MainMenu()),
-                              (Route<dynamic> route) => false,
+                          (Route<dynamic> route) => false,
                         );
                       } else {
                         ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text('Check your credentials and try again')),
+                          SnackBar(content: Text(loginResult['message'] ?? 'Check your credentials and try again')),
                         );
                       }
                     } catch (e) {

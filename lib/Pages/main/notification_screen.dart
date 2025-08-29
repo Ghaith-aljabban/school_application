@@ -62,7 +62,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
             future: _notificationsFuture,
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
-                return const Center(child: CircularProgressIndicator());
+                return Center(child: CircularProgressIndicator(color:myGreen));
               } else if (snapshot.hasError) {
                 return Center(
                   child: Text(

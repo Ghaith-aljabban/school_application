@@ -74,7 +74,7 @@ class _QuizListScreenState extends State<QuizListScreen> {
         ),
       ),
       body: isLoading
-          ? const Center(child: CircularProgressIndicator())
+          ?  Center(child: CircularProgressIndicator(color:myGreen))
           : errorMessage != null
           ? Center(child: Text(errorMessage!))
           : exams.isEmpty

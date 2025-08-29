@@ -146,7 +146,7 @@ class _QuizPageState extends State<QuizPage> {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return Scaffold(
             backgroundColor: myLime,
-            body: Center(child: CircularProgressIndicator()),
+            body: Center(child: CircularProgressIndicator(color:myGreen)),
           );
         }
 

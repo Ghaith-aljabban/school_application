@@ -104,7 +104,7 @@ class _DailyScheduleState extends State<DailySchedule> {
                             shortDay,
                             style: flexableTextStyle(
                               color: isSelected ? myGreen : Colors.black,
-                              size: 14,
+                              size: 18,
                               isBold: isSelected,
                             ),
                           ),

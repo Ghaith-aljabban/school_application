@@ -52,7 +52,7 @@ class _SubjectSemestersScreenState extends State<SubjectSemestersScreen> {
         future: _getSemestersFuture(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
+            return Center(child: CircularProgressIndicator(color:myGreen));
           } else if (snapshot.hasError) {
             return Center(child: Text(snapshot.error.toString()));
           } else if (!snapshot.hasData || snapshot.data!.isEmpty) {

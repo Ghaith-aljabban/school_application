@@ -28,11 +28,11 @@ class _AccountScreenState extends State<AccountScreen> {
           actions: [
             TextButton(
               onPressed: () => Navigator.of(context).pop(false),
-              child: Text('Cancel'),
+              child: Text('Cancel',style:TextStyle(color: myGreen),),
             ),
             TextButton(
               onPressed: () => Navigator.of(context).pop(true),
-              child: Text('Logout'),
+              child: Text('Logout',style:TextStyle(color: myGreen),),
             ),
           ],
         );
@@ -69,7 +69,7 @@ class _AccountScreenState extends State<AccountScreen> {
         future: UserService.getOne(studentID, token),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
+            return Center(child: CircularProgressIndicator(color:myGreen ,));
           }
 
           if (snapshot.hasError) {

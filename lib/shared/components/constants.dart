@@ -29,9 +29,11 @@ TextFormField buildPasswordTFF({
   required bool obscurePassword,
   required VoidCallback onVisibilityPressed,
   String hintText = 'Password',
+  String? Function(String?)? validator,
 }) => TextFormField(
     controller: controller,
     obscureText: obscurePassword,
+    validator: validator,
     decoration: InputDecoration(
       filled: true,
       fillColor: myLime,
@@ -87,56 +89,56 @@ Widget defaultReportcard({
   required String header,
   required String description,
   required VoidCallback onPressed,
-}) => Container(
-  width: width,
-  height: height,
-  child: Padding(
-    padding: const EdgeInsets.all(12.0),
-    child: Row(
-      children: [
-        Expanded(
-          flex: 3,
-          child: SizedBox(
-            width: 236,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  header,
-                  style: flexableTextStyle(size: 19, color: myGreen, isBold: true),
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  description,
-                  style: flexableTextStyle(size: 13, color: myGray, isBold: false),
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  "View detailed performance report",
-                  style: flexableTextStyle(size: 12, color: Colors.blue, isBold: false),
-                ),
-              ],
+}) => GestureDetector(
+  onTap: onPressed,
+  child: Container(
+    width: width,
+    height: height,
+    child: Padding(
+      padding: const EdgeInsets.all(12.0),
+      child: Row(
+        children: [
+          Expanded(
+            flex: 3,
+            child: SizedBox(
+              width: 236,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    header,
+                    style: flexableTextStyle(size: 23, color: myGreen, isBold: true),
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    description,
+                    style: flexableTextStyle(size: 12, color: myGray, isBold: false),
+                  ),
+                  const SizedBox(height: 5),
+                  Text(
+                    "View detailed performance report",
+                    style: flexableTextStyle(size: 12, color: Colors.blue, isBold: false),
+                  ),
+                ],
+              ),
             ),
           ),
-        ),
-        const SizedBox(width: 10),
-        Expanded(
-          flex: 1,
-          child: SizedBox(
-            width: 236,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: [
-                IconButton(
-                  icon: Icon(Icons.arrow_forward_ios, color: myGreen),
-                  onPressed: onPressed,
-                ),
-              ],
+          const SizedBox(width: 10),
+          Expanded(
+            flex: 1,
+            child: SizedBox(
+              width: 236,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  Icon(Icons.arrow_forward_ios, color: myGreen),
+                ],
+              ),
             ),
           ),
-        ),
-      ],
+        ],
+      ),
     ),
   ),
 );

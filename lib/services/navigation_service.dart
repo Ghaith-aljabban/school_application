@@ -8,6 +8,7 @@ import 'package:school_application/Models/subjects_model.dart';
 import 'package:school_application/layout/main_menu.dart';
 
 import '../main.dart';
+import '../shared/network/styles/colors.dart';
 
 // ===== Global navigator key for safe navigation from anywhere (e.g., FCM) =====
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
@@ -95,8 +96,8 @@ class _BootstrapScreenState extends State<BootstrapScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(
-      body: Center(child: CircularProgressIndicator()),
+    return Scaffold(
+      body: Center(child: CircularProgressIndicator(color:myGreen)),
     );
   }
 }

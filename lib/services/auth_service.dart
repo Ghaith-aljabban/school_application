@@ -9,7 +9,7 @@ import '../Models/auth_model.dart';
 import '../Models/user_model.dart';
 
 class AuthService {
-  static Future<bool?> login({required AuthModel authModel}) async {
+  static Future<Map<String, dynamic>> login({required AuthModel authModel}) async {
     Dio dio = Dio();
     try {
       Response response = await dio.post(consUrl('users/signin'),
@@ -37,13 +37,30 @@ class AuthService {
           }
         } catch (_) {}
 
-        return true;
+        // Check user role from response
+        String userRole = response.data['user']['role'] ?? 
+                         response.data['user']['user_type'] ?? 
+                         response.data['user']['type'] ?? 
+                         response.data['user_type'] ?? 
+                         'unknown';
+
+        return {
+          'success': true,
+          'role': userRole,
+          'message': 'Login successful'
+        };
       } else {
-        return false;
+        return {
+          'success': false,
+          'message': 'Login failed'
+        };
       }
     } catch (e) {
       print(e);
-      return false;
+      return {
+        'success': false,
+        'message': 'Network error or invalid credentials'
+      };
     }
   }
 }
