@@ -3,6 +3,8 @@ import 'dart:convert';
 import 'package:dio/dio.dart';
 import 'package:school_application/main.dart';
 import 'package:school_application/storage/secure_storage_service.dart';
+import 'package:school_application/services/firebase_service.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import '../Models/auth_model.dart';
 import '../Models/user_model.dart';
 
@@ -13,8 +15,6 @@ class AuthService {
       Response response = await dio.post(consUrl('users/signin'),
         data: authModel.toMap(),
       );
-      print(response.data  );
-      print(response.statusCode);
       if (response.statusCode == 200) {
         // Set global variables
         token = response.data['token'];
@@ -25,6 +25,17 @@ class AuthService {
           token: response.data['token'],
           studentId: response.data['user']["id"],
         );
+
+        // After login, (re)fetch and register FCM token with backend
+        try {
+          final fcmToken = await FirebaseMessaging.instance.getToken();
+          if (fcmToken != null && fcmToken.isNotEmpty) {
+            await FirebaseService.registerFcmToken(
+              fcmToken: fcmToken,
+              deviceType: 'mobile',
+            );
+          }
+        } catch (_) {}
 
         return true;
       } else {

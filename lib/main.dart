@@ -33,6 +33,6 @@ class MyApp extends StatelessWidget {
 }
 
  String consUrl(String relativePath) {
-const baseUrl = 'http://10.65.11.39:3000/api/';
+const baseUrl = 'http://192.168.1.104:3000/api/';
 return baseUrl + relativePath;
 }

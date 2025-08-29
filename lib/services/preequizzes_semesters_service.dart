@@ -11,7 +11,7 @@ class PreequizzesSemestersService {
         consUrl('exams/subject/$subjectId/quiz-semesters'),
         options: Options(headers: {'Authorization': 'Bearer $token'}),
       );
-
+      print(response);
       if (response.statusCode == 200) {
         List<Semester> semesters = [];
         for (var item in response.data) {

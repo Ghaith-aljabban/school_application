@@ -16,7 +16,6 @@ class QuizService {
           'Authorization': 'Bearer $token',
         }),
       );
-      print("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<${response.data}>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
       if (response.statusCode == 200) {
         return (response.data as List)
             .map((exam) => QuizDateModel.fromJson(exam))

@@ -3,6 +3,8 @@ import 'dart:developer';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:school_application/services/notification_service.dart';
+import 'package:dio/dio.dart';
+import 'package:school_application/main.dart';
 
 // ===== Background handler MUST be top-level and annotated =====
 @pragma('vm:entry-point')
@@ -38,14 +40,20 @@ class FirebaseService {
       sound: true,
     );
 
-    // Log token (send to backend if needed)
+    // Obtain token and attempt registration when available
     final fcmToken = await FirebaseMessaging.instance.getToken();
     log('FCM token: $fcmToken');
+    print(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>FCM token: $fcmToken");
+    if (fcmToken != null && fcmToken.isNotEmpty) {
+      // Attempt register if app auth token is already present
+      await registerFcmToken(fcmToken: fcmToken, deviceType: 'mobile');
+    }
 
-    // Also log on token refresh
-    FirebaseMessaging.instance.onTokenRefresh.listen(
-      (t) => log('FCM REFRESH: $t'),
-    );
+    // Refresh listener: re-register on token change
+    FirebaseMessaging.instance.onTokenRefresh.listen((t) async {
+      log('FCM REFRESH: $t');
+      await registerFcmToken(fcmToken: t, deviceType: 'mobile');
+    });
   }
 
   static void setupMessageHandlers(Function(Map<String, dynamic>) onMessageOpenedApp) {
@@ -69,5 +77,35 @@ class FirebaseService {
         onMessageOpenedApp(m.data);
       }
     });
+  }
+
+  /// Registers the provided FCM token with the backend API.
+  /// Safe to call multiple times; backend should de-duplicate.
+  static Future<void> registerFcmToken({required String fcmToken, String deviceType = 'mobile'}) async {
+    try {
+      final dio = Dio();
+      final data = {
+        'token': fcmToken,
+        'device_type': deviceType,
+      };
+
+      final options = token.isNotEmpty
+          ? Options(headers: {'Authorization': 'Bearer $token'})
+          : null;
+
+      final response = await dio.post(
+        consUrl('fcm/register'),
+        data: data,
+        options: options,
+      );
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        log('FCM token registered successfully');
+      } else {
+        log('FCM register failed: status ${response.statusCode}');
+      }
+    } catch (e) {
+      log('FCM register error: $e');
+    }
   }
 }

@@ -179,7 +179,7 @@ Widget SubjectWidget({required String name, required IconData icon}) =>
             child: Text(
               name,
               style: flexableTextStyle(
-                size: 20,
+                size: 14,
                 color: Colors.white,
                 isBold: true,
               ),

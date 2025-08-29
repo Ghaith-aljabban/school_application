@@ -15,7 +15,6 @@ class ExamService {
           'Authorization': 'Bearer $token',
         }),
       );
-      print("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<${response.data}>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
       if (response.statusCode == 200) {
         return (response.data as List)
             .map((exam) => ExamDateModel.fromJson(exam))

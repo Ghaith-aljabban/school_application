@@ -83,61 +83,60 @@ Widget reportCardButton({
 
 Widget defaultReportcard({
   double width = double.infinity,
-  double height = 120,
+  double height = 150,
   required String header,
   required String description,
-  required String percentage,
   required VoidCallback onPressed,
 }) => Container(
-    width: width,
-    height: height,
-
-    child: Padding(
-        padding: const EdgeInsets.all(12.0),
-        child: Row(
-          children: [
-            Expanded(
-              flex: 3,
-              child: SizedBox(
-                width: 236, // <-- Add this
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(header,
-                      style: flexableTextStyle(size: 19, color: myGreen, isBold: true),
-                    ),
-                    Text(description,
-                      style: flexableTextStyle(size: 13, color: myGray, isBold: false),
-                    ),
-                  ],
+  width: width,
+  height: height,
+  child: Padding(
+    padding: const EdgeInsets.all(12.0),
+    child: Row(
+      children: [
+        Expanded(
+          flex: 3,
+          child: SizedBox(
+            width: 236,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  header,
+                  style: flexableTextStyle(size: 19, color: myGreen, isBold: true),
                 ),
-              ),
-            ),
-            SizedBox(width: 10),
-            Expanded(
-              flex: 1,
-              child: SizedBox(
-                width: 236, // <-- Add this
-                child: Column(
-
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    SizedBox(
-                      height: 10,
-                    ),
-                    Text(percentage,
-                      style: flexableTextStyle(size: 14, color: Colors.black, isBold: false),
-                    ),
-                    SizedBox(
-                      height: 24,
-                    ),
-                    reportCardButton(width: 120, function: onPressed,),
-                  ],
+                const SizedBox(height: 8),
+                Text(
+                  description,
+                  style: flexableTextStyle(size: 13, color: myGray, isBold: false),
                 ),
-              ),
+                const SizedBox(height: 8),
+                Text(
+                  "View detailed performance report",
+                  style: flexableTextStyle(size: 12, color: Colors.blue, isBold: false),
+                ),
+              ],
             ),
-          ],
-        )
-
-    )
+          ),
+        ),
+        const SizedBox(width: 10),
+        Expanded(
+          flex: 1,
+          child: SizedBox(
+            width: 236,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                IconButton(
+                  icon: Icon(Icons.arrow_forward_ios, color: myGreen),
+                  onPressed: onPressed,
+                ),
+              ],
+            ),
+          ),
+        ),
+      ],
+    ),
+  ),
 );

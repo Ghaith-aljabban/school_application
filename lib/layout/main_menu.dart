@@ -77,14 +77,14 @@ class _MainMenuState extends State<MainMenu> {
                       Icons.description,
                       color: _selectedIndex == 1 ? myGreen : Colors.black,
                     ),
-                    label: 'Preexam',
+                    label: 'Past exam',
                   ),
                   BottomNavigationBarItem(
                     icon: Icon(
                       Icons.quiz,
                       color: _selectedIndex == 2 ? myGreen : Colors.black,
                     ),
-                    label: 'Quiz',
+                    label: 'Past Quiz',
                   ),
                   BottomNavigationBarItem(
                     icon: Icon(

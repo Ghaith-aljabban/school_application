@@ -10,14 +10,14 @@ class PrequizService  {
     try {
       Dio dio = Dio();
       Response response = await dio.get(
-        consUrl('exams/student-preequizzes'),
+        consUrl('exams/student-prequizzes'),
         data: {
           'subjectId': subjectId,
           'semesterId': semesterId
         },
         options: Options(headers: {'Authorization': 'Bearer $token'}),
+
       );
-      print(response);
       if (response.statusCode == 200) {
         List<Preexam> preexams = [];
         for (var item in response.data) {

@@ -17,7 +17,6 @@ class PreexamService {
         },
         options: Options(headers: {'Authorization': 'Bearer $token'}),
       );
-      print(response);
       if (response.statusCode == 200) {
         List<Preexam> preexams = [];
         for (var item in response.data) {

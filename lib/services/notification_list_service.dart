@@ -11,7 +11,7 @@ class NotificationListService {
       final response = await _dio.get(consUrl('notifications'),options: Options(headers: {
           'Authorization': 'Bearer $token',
           }));
-
+      print(response);
       if (response.statusCode == 200) {
         List<Notification> notifications = (response.data as List)
             .map((item) => Notification.fromMap(item))
